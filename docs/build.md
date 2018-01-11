@@ -4,6 +4,7 @@ Build images:
 
 ```
 docker-compose build
+docker-compose build --no-cache     # if files/* changes
 ```
 
 List images:
