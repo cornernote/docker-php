@@ -33,33 +33,6 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
                            bcmath \
                            soap
 
-# Copy configuration files
-COPY files/ /
-
-# Setup environment variables
-ENV PATH=/app:/app/vendor/bin:/root/.composer/vendor/bin:$PATH \
-    TERM=linux
-
-# Add GITHUB_API_TOKEN support for composer
-RUN echo "alias composer='sh /root/composer.sh'" >> /root/.bashrc && \
-    chmod 700 /root/composer.sh
-
-# Install composer
-RUN curl -sS https://getcomposer.org/installer | php -- \
-        --version=1.5.6 && \
-    mv composer.phar /usr/local/bin/composer && \
-    composer global require \
-        "fxp/composer-asset-plugin:^1.4.0" \
-        "hirak/prestissimo:^0.3.0" && \
-    composer global dumpautoload --optimize
-
-# Install packages required for Yii 2.0 Framework codeception testing globally
-RUN composer global require  --prefer-dist \
-        "codeception/codeception:^2.3.0" \
-        "codeception/specify:*" \
-        "codeception/verify:*" && \
-    composer global dumpautoload --optimize
-
 # Install xdebug
 RUN printf "\n" | pecl install xdebug-2.4.0RC2
 
@@ -120,12 +93,39 @@ RUN rm -rf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox/
 RUN apt-get install -y supervisor python-pip
 RUN pip install supervisor-stdout
 
+# Use application path
+WORKDIR /app
+
+# Copy configuration files
+COPY files/ /
+
+# Setup environment variables
+ENV PATH=/app:/app/vendor/bin:/root/.composer/vendor/bin:$PATH \
+    TERM=linux
+
+# Add GITHUB_API_TOKEN support for composer
+RUN echo "alias composer='sh /root/composer.sh'" >> /root/.bashrc && \
+    chmod 700 /root/composer.sh
+
+# Install composer
+RUN curl -sS https://getcomposer.org/installer | php -- \
+        --version=1.5.6 && \
+    mv composer.phar /usr/local/bin/composer && \
+    composer global require \
+        "fxp/composer-asset-plugin:^1.4.0" \
+        "hirak/prestissimo:^0.3.0" && \
+    composer global dumpautoload --optimize
+
+# Install packages required for Yii 2.0 Framework codeception testing globally
+RUN composer global require  --prefer-dist \
+        "codeception/codeception:^2.3.0" \
+        "codeception/specify:*" \
+        "codeception/verify:*" && \
+    composer global dumpautoload --optimize
+
 # Cleanup
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# Use application path
-WORKDIR /app
 
 # Run supervisor
 CMD ["/usr/bin/supervisord"]
