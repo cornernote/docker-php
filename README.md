@@ -152,3 +152,4 @@ buffer_size = 100
 events = PROCESS_LOG
 result_handler = supervisor_stdout:event_handler
 ```
+
