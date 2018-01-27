@@ -2,41 +2,14 @@
 
 ## Supported tags and `Dockerfile` links
 
-* `5.6-fpm` [Dockerfile](https://github.com/cornernote/docker-php/blob/master/Dockerfile)
+* `latest` [Dockerfile](https://github.com/cornernote/docker-php/blob/master/Dockerfile)
+* `5.6-fpm` [Dockerfile](https://github.com/cornernote/docker-php/blob/5.6-fpm/Dockerfile)
 
 ## Resources
 
 * [GitHub Project](https://github.com/cornernote/docker-php)
 * [DockerHub Project](https://hub.docker.com/r/cornernote/php/)
 
-
-## Building Images
-
-Build images:
-
-```
-docker-compose build
-docker-compose build --no-cache     # if files/* changes
-```
-
-List images:
-
-```
-docker images
-```
-
-Tag image:
-
-```
-docker tag XXX cornernote/php:5.6-fpm
-```
-
-Push to hub.docker.com:
-
-```
-docker login
-docker push cornernote/php:5.6-fpm
-```
 
 ## Usage Example
 
