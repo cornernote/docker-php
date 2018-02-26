@@ -23,8 +23,8 @@ RUN apt-get -y install \
         --no-install-recommends
 
 # Install supervisor
-RUN apt-get install -y supervisor python-pip
-RUN pip install supervisor-stdout
+RUN apt-get install -y supervisor python-pip && \
+    pip install supervisor-stdout
 
 # Install PHP extensions required for Yii 2.0 Framework
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ && \
@@ -51,68 +51,66 @@ RUN tar xvfz gearmand-1.1.18.tar.gz
 WORKDIR /root/gearmand-1.1.18
 RUN ./configure && \
     make && \
-    make install
-WORKDIR /root
-RUN printf "\n" | pecl install gearman
-RUN docker-php-ext-enable gearman
+    make install && \
+    printf "\n" | pecl install gearman && \
+    docker-php-ext-enable gearman
 RUN rm -rf /root/gearmand-1.1.18 /root/gearmand-1.1.18.tar.gz
+WORKDIR /root
 
-# Install pcntl
+# PHP Extras
 ADD http://php.net/get/php-5.6.33.tar.gz/from/this/mirror php-5.6.33.tar.gz
 RUN tar xvfz php-5.6.33.tar.gz
+
+# Install pcntl
 WORKDIR /root/php-5.6.33/ext/pcntl
 RUN phpize && \
     ./configure && \
     make && \
-    make install
+    make install && \
+    docker-php-ext-enable pcntl
 WORKDIR /root
-RUN docker-php-ext-enable pcntl
-RUN rm -rf /root/php-5.6.33 /root/php-5.6.33.tar.gz
 
 # Install mysqli
-ADD http://php.net/get/php-5.6.33.tar.gz/from/this/mirror php-5.6.33.tar.gz
-RUN tar xvfz php-5.6.33.tar.gz
-WORKDIR /app/php-5.6.33/ext/mysqli
+WORKDIR /root/php-5.6.33/ext/mysqli
 RUN phpize && \
     ./configure && \
     make && \
-    make install
+    make install && \
+    docker-php-ext-enable mysqli
 WORKDIR /app
-RUN docker-php-ext-enable mysqli
-RUN rm -rf /root/php-5.6.33 /root/php-5.6.33.tar.gz
 
 # Install ssh2
-RUN apt-get install -y libssh2-1-dev
-RUN printf "\n" | pecl install channel://pecl.php.net/ssh2-0.12
-RUN docker-php-ext-enable ssh2
+RUN apt-get install -y libssh2-1-dev && \
+    printf "\n" | pecl install channel://pecl.php.net/ssh2-0.12 && \
+    docker-php-ext-enable ssh2
 
 # Install imagick
-RUN apt-get install -y imagemagick libmagickwand-dev libmagickcore-dev
-RUN printf "\n" | pecl install imagick
-RUN docker-php-ext-enable imagick
+RUN apt-get install -y imagemagick libmagickwand-dev libmagickcore-dev && \
+    printf "\n" | pecl install imagick && \
+    docker-php-ext-enable imagick
 
 # Install memcached
-RUN printf "\n" | pecl install memcache
-RUN docker-php-ext-enable memcache
+RUN printf "\n" | pecl install memcache && \
+    docker-php-ext-enable memcache
 
 # Install mailparse
-RUN printf "\n" | pecl install mailparse-2.1.6
-RUN docker-php-ext-enable mailparse
+RUN printf "\n" | pecl install mailparse-2.1.6 && \
+    docker-php-ext-enable mailparse
 
 # Install wkhtmltopdf
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y wkhtmltopdf openssl build-essential xorg libssl-dev xvfb
 ADD https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
-RUN tar xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
-RUN mv wkhtmltox/bin/wkhtmlto* /usr/bin/
-RUN rm -rf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox/
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y wkhtmltopdf openssl build-essential xorg libssl-dev xvfb && \
+    tar xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz && \
+    mv wkhtmltox/bin/wkhtmlto* /usr/bin/ && \
+    rm -rf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox/
 
 # Install geoip
 ADD http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz GeoIP.dat.gz
-RUN gunzip GeoIP.dat.gz
-RUN mkdir /usr/share/GeoIP/
-RUN mv GeoIP.dat /usr/share/GeoIP/
-RUN chmod a+r /usr/share/GeoIP/GeoIP.dat
-RUN rm -f GeoIP.dat.gz
+RUN gunzip GeoIP.dat.gz && \
+    mkdir /usr/share/GeoIP/ && \
+    mv GeoIP.dat /usr/share/GeoIP/ && \
+    chmod a+r /usr/share/GeoIP/GeoIP.dat && \
+    rm -f GeoIP.dat.gz
 
 # Use application path
 WORKDIR /app
@@ -145,6 +143,7 @@ RUN composer global require  --prefer-dist \
     composer global dumpautoload --optimize
 
 # Cleanup
+RUN rm -rf /root/php-5.6.33 /root/php-5.6.33.tar.gz
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
