@@ -18,4 +18,3 @@
 
 * [GitHub Project](https://github.com/cornernote/docker-php)
 * [DockerHub Project](https://hub.docker.com/r/cornernote/php/)
-
