@@ -1,9 +1,10 @@
 FROM php:5.6-fpm
 WORKDIR /root
 
-# Install system packages for PHP extensions
-RUN apt-get update && \
-    apt-get -y install \
+RUN apt-get update 
+
+# Install system packages
+RUN apt-get -y install \
             g++ \
             git \
             libicu-dev \
@@ -20,6 +21,10 @@ RUN apt-get update && \
             vim \
             nano \
         --no-install-recommends
+
+# Install supervisor
+RUN apt-get install -y supervisor python-pip
+RUN pip install supervisor-stdout
 
 # Install PHP extensions required for Yii 2.0 Framework
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ && \
@@ -53,16 +58,28 @@ RUN docker-php-ext-enable gearman
 RUN rm -rf /root/gearmand-1.1.18 /root/gearmand-1.1.18.tar.gz
 
 # Install pcntl
-ADD http://php.net/get/php-5.6.32.tar.gz/from/this/mirror php-5.6.32.tar.gz
-RUN tar xvfz php-5.6.32.tar.gz
-WORKDIR /root/php-5.6.32/ext/pcntl
+ADD http://php.net/get/php-5.6.33.tar.gz/from/this/mirror php-5.6.33.tar.gz
+RUN tar xvfz php-5.6.33.tar.gz
+WORKDIR /root/php-5.6.33/ext/pcntl
 RUN phpize && \
     ./configure && \
     make && \
     make install
 WORKDIR /root
 RUN docker-php-ext-enable pcntl
-RUN rm -rf /root/php-5.6.32 /root/php-5.6.32.tar.gz
+RUN rm -rf /root/php-5.6.33 /root/php-5.6.33.tar.gz
+
+# Install mysqli
+ADD http://php.net/get/php-5.6.33.tar.gz/from/this/mirror php-5.6.33.tar.gz
+RUN tar xvfz php-5.6.33.tar.gz
+WORKDIR /app/php-5.6.33/ext/mysqli
+RUN phpize && \
+    ./configure && \
+    make && \
+    make install
+WORKDIR /app
+RUN docker-php-ext-enable mysqli
+RUN rm -rf /root/php-5.6.33 /root/php-5.6.33.tar.gz
 
 # Install ssh2
 RUN apt-get install -y libssh2-1-dev
@@ -89,9 +106,13 @@ RUN tar xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
 RUN mv wkhtmltox/bin/wkhtmlto* /usr/bin/
 RUN rm -rf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox/
 
-# Install supervisor
-RUN apt-get install -y supervisor python-pip
-RUN pip install supervisor-stdout
+# Install geoip
+ADD http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz GeoIP.dat.gz
+RUN gunzip GeoIP.dat.gz
+RUN mkdir /usr/share/GeoIP/
+RUN mv GeoIP.dat /usr/share/GeoIP/
+RUN chmod a+r /usr/share/GeoIP/GeoIP.dat
+RUN rm -f GeoIP.dat.gz
 
 # Use application path
 WORKDIR /app
