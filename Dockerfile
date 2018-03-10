@@ -18,7 +18,6 @@ RUN apt-get -y install \
             mysql-client \
             openssh-client \
             libxml2-dev \
-            mailutils \
             vim \
             nano \
         --no-install-recommends
