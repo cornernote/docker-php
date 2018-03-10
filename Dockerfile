@@ -18,6 +18,7 @@ RUN apt-get -y install \
             mysql-client \
             openssh-client \
             libxml2-dev \
+            mailutils \
             vim \
             nano \
         --no-install-recommends
@@ -58,11 +59,11 @@ RUN rm -rf /root/gearmand-1.1.18 /root/gearmand-1.1.18.tar.gz
 WORKDIR /root
 
 # PHP Extras
-ADD http://php.net/get/php-5.6.33.tar.gz/from/this/mirror php-5.6.33.tar.gz
-RUN tar xvfz php-5.6.33.tar.gz
+ADD http://php.net/get/php-5.6.34.tar.gz/from/this/mirror php-5.6.34.tar.gz
+RUN tar xvfz php-5.6.34.tar.gz
 
 # Install pcntl
-WORKDIR /root/php-5.6.33/ext/pcntl
+WORKDIR /root/php-5.6.34/ext/pcntl
 RUN phpize && \
     ./configure && \
     make && \
@@ -71,7 +72,7 @@ RUN phpize && \
 WORKDIR /root
 
 # Install mysqli
-WORKDIR /root/php-5.6.33/ext/mysqli
+WORKDIR /root/php-5.6.34/ext/mysqli
 RUN phpize && \
     ./configure && \
     make && \
@@ -143,7 +144,7 @@ RUN composer global require  --prefer-dist \
     composer global dumpautoload --optimize
 
 # Cleanup
-RUN rm -rf /root/php-5.6.33 /root/php-5.6.33.tar.gz
+RUN rm -rf /root/php-5.6.34 /root/php-5.6.34.tar.gz
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
