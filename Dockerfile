@@ -26,6 +26,15 @@ RUN apt-get -y install \
 RUN apt-get install -y supervisor python-pip && \
     pip install supervisor-stdout
 
+# Install lockrun
+ADD https://raw.githubusercontent.com/pushcx/lockrun/master/lockrun.c lockrun.c
+RUN apt-get install -y gcc && \
+    gcc lockrun.c -o lockrun && \
+    cp lockrun /usr/local/bin/ && \
+    rm -f lockrun.c && \
+    apt-get remove -y gcc && \
+    apt-get autoremove -y
+
 # Install PHP extensions required for Yii 2.0 Framework
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ && \
     docker-php-ext-configure bcmath && \
