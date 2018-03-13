@@ -1,6 +1,7 @@
 FROM php:5.6-fpm
 WORKDIR /root
 
+# Update package info
 RUN apt-get update 
 
 # Install system packages
@@ -31,9 +32,7 @@ ADD https://raw.githubusercontent.com/pushcx/lockrun/master/lockrun.c lockrun.c
 RUN apt-get install -y gcc && \
     gcc lockrun.c -o lockrun && \
     cp lockrun /usr/local/bin/ && \
-    rm -f lockrun.c && \
-    apt-get remove -y gcc && \
-    apt-get autoremove -y
+    rm -f lockrun.c
 
 # Install PHP extensions required for Yii 2.0 Framework
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ && \
