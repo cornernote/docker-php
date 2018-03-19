@@ -105,6 +105,11 @@ RUN printf "\n" | pecl install memcache && \
 RUN printf "\n" | pecl install mailparse-2.1.6 && \
     docker-php-ext-enable mailparse
 
+# Install imap
+RUN apt-get install -y libc-client-dev libkrb5-dev && \
+    docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \
+    docker-php-ext-install imap
+    
 # Install wkhtmltopdf
 ADD https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y wkhtmltopdf openssl build-essential xorg libssl-dev xvfb && \
