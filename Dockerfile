@@ -21,6 +21,7 @@ RUN apt-get -y install \
             libxml2-dev \
             vim \
             nano \
+            percona-toolkit \
         --no-install-recommends
 
 # Install supervisor
@@ -156,9 +157,9 @@ RUN composer global require  --prefer-dist \
     composer global dumpautoload --optimize
 
 # Cleanup
-RUN rm -rf /root/php-5.6.34 /root/php-5.6.34.tar.gz
-RUN apt-get clean
-RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN rm -rf /root/php-5.6.34 /root/php-5.6.34.tar.gz && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Run supervisor
 CMD ["/usr/bin/supervisord"]
