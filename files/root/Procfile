@@ -1,2 +1,0 @@
-phpfpm: docker-run.sh
-cron: crond -f

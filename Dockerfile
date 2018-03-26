@@ -8,9 +8,11 @@ RUN apt-get update && \
             percona-toolkit \
         --no-install-recommends
 
-# Install Forego
-RUN curl -L -o /usr/local/bin/forego https://github.com/jwilder/forego/releases/download/v0.16.1/forego
-RUN chmod u+x /usr/local/bin/forego
+# Install supervisor
+RUN apt-get -y install \
+            supervisor \
+            python-pip && \
+    pip install supervisor-stdout
 
 # Install lockrun
 ADD https://raw.githubusercontent.com/pushcx/lockrun/master/lockrun.c lockrun.c
@@ -94,5 +96,5 @@ COPY files/ /
 # forward logs to docker log collector
 RUN ln -sf /usr/sbin/cron /usr/sbin/crond
 
-# Run forego
-CMD ["forego", "start", "-r", "-f", "/root/Procfile"]
+# Run supervisor
+CMD ["/usr/bin/supervisord"]
