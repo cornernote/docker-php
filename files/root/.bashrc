@@ -13,6 +13,8 @@ Docker image cornernote/docker-php
 Available commands:
 
  composer
+ codecept
+ phpunit
  yii
 
 MSG
