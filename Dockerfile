@@ -39,10 +39,10 @@ RUN apt-get -y install \
 ADD https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
 RUN apt-get -y install \
             wkhtmltopdf \
-            openssl \
             build-essential \
-            xorg \
+            openssl \
             libssl1.0-dev \
+            xorg \
             xvfb && \
     tar xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz && \
     mv wkhtmltox/bin/wkhtmlto* /usr/bin/ && \
