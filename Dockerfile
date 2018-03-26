@@ -29,6 +29,7 @@ RUN apt-get -y install \
     ./configure && \
     make && \
     make install && \
+    docker-php-ext-enable gearman && \
     rm -rf /tmp/pecl-gearman
 
 # Install wkhtmltopdf
