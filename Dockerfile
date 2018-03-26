@@ -55,6 +55,9 @@ RUN docker-php-ext-install mysqli && \
 RUN pecl install mailparse && \
     docker-php-ext-enable mailparse
 
+# Install pcntl
+RUN docker-php-ext-enable pcntl
+
 # Install ssh2
 RUN apt-get -y install \
             libssh2-1-dev && \
