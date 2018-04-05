@@ -95,6 +95,14 @@ RUN apt-get -y install \
     mv wkhtmltox/bin/wkhtmlto* /usr/bin/ && \
     rm -rf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox/
 
+# Install mscorefonts
+ADD http://ftp.us.debian.org/debian/pool/contrib/m/msttcorefonts/ttf-mscorefonts-installer_3.6_all.deb ttf-mscorefonts-installer_3.6_all.deb
+RUN apt-get -y install \
+            wget \
+            cabextract && \
+    dpkg -i ttf-mscorefonts-installer_3.6_all.deb && \
+    rm -f ttf-mscorefonts-installer_3.6_all.deb
+    
 # Install geoip
 ADD http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz GeoIP.dat.gz
 RUN gunzip GeoIP.dat.gz && \
