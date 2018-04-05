@@ -5,6 +5,7 @@ RUN apt-get update && \
     apt-get -y install \
             cron \
             vim \
+	    ghostscript \
             percona-toolkit \
         --no-install-recommends
 
