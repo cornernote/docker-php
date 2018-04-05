@@ -7,6 +7,7 @@ RUN apt-get update && \
             autoconf \
             cron \
             vim \
+	    ghostscript \
             percona-toolkit \
         --no-install-recommends
 
