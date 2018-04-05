@@ -35,19 +35,6 @@ RUN apt-get -y install \
     docker-php-ext-enable gearman && \
     rm -rf /tmp/pecl-gearman
 
-# Install wkhtmltopdf
-ADD https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
-RUN apt-get -y install \
-            wkhtmltopdf \
-            build-essential \
-            openssl \
-            libssl1.0-dev \
-            xorg \
-            xvfb && \
-    tar xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz && \
-    mv wkhtmltox/bin/wkhtmlto* /usr/bin/ && \
-    rm -rf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox/
-
 # Install geoip
 ADD http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz GeoIP.dat.gz
 RUN gunzip GeoIP.dat.gz && \
@@ -93,6 +80,19 @@ RUN apt-get -y install \
     docker-php-ext-configure memcached && \
     docker-php-ext-install memcached && \
     rm /tmp/memcached.tar.gz
+
+# Install wkhtmltopdf
+ADD https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+RUN apt-get -y install \
+            wkhtmltopdf \
+            build-essential \
+            openssl \
+            libssl1.0-dev \
+            xorg \
+            xvfb && \
+    tar xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz && \
+    mv wkhtmltox/bin/wkhtmlto* /usr/bin/ && \
+    rm -rf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox/
 
 # Cleanup
 RUN apt-get clean && \
