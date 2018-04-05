@@ -3,6 +3,7 @@ FROM dmstr/php-yii2:7.1-fpm-3.2
 # Install system packages
 RUN apt-get update && \
     apt-get -y install \
+            autoconf \
             cron \
             vim \
             percona-toolkit \
@@ -34,6 +35,19 @@ RUN apt-get -y install \
     make install && \
     docker-php-ext-enable gearman && \
     rm -rf /tmp/pecl-gearman
+
+# Install wkhtmltopdf
+ADD https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+RUN apt-get -y install \
+            wkhtmltopdf \
+            build-essential \
+            openssl \
+            libssl-dev \
+            xorg \
+            xvfb && \
+    tar xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz && \
+    mv wkhtmltox/bin/wkhtmlto* /usr/bin/ && \
+    rm -rf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox/
 
 # Install geoip
 ADD http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz GeoIP.dat.gz
@@ -80,19 +94,6 @@ RUN apt-get -y install \
     docker-php-ext-configure memcached && \
     docker-php-ext-install memcached && \
     rm /tmp/memcached.tar.gz
-
-# Install wkhtmltopdf
-ADD https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
-RUN apt-get -y install \
-            wkhtmltopdf \
-            build-essential \
-            openssl \
-            libssl-dev \
-            xorg \
-            xvfb && \
-    tar xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz && \
-    mv wkhtmltox/bin/wkhtmlto* /usr/bin/ && \
-    rm -rf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox/
 
 # Cleanup
 RUN apt-get clean && \
