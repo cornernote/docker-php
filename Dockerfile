@@ -112,7 +112,8 @@ RUN apt-get install -y libc-client-dev libkrb5-dev && \
     
 # Install wkhtmltopdf
 ADD https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y wkhtmltopdf openssl build-essential xorg libssl-dev xvfb && \
+RUN apt-get install -y libssl1.0-dev && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y wkhtmltopdf openssl build-essential xorg libssl-dev xvfb && \
     tar xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz && \
     mv wkhtmltox/bin/wkhtmlto* /usr/bin/ && \
     rm -rf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox/
