@@ -57,11 +57,15 @@ RUN apt-get -y install \
 
 # Install imap
 RUN apt-get -y install \
+            g++ \
+            pkg-config \
             openssl \
             libssl-dev \
-            libsslcommon2-dev \
+            libsasl2-dev \
+            libcurl4-openssl-dev \
             libc-client-dev \
-            libkrb5-dev && \
+            libkrb5-dev \
+            libpcre3-dev && \
     docker-php-ext-configure imap \
             --with-kerberos \
             --with-imap-ssl && \
