@@ -37,27 +37,6 @@ RUN apt-get -y install \
     docker-php-ext-enable gearman && \
     rm -rf /tmp/pecl-gearman
 
-# Install wkhtmltopdf
-ADD https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
-RUN apt-get -y install \
-            wkhtmltopdf \
-            build-essential \
-            openssl \
-            libssl-dev \
-            xorg \
-            xvfb && \
-    tar xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz && \
-    mv wkhtmltox/bin/wkhtmlto* /usr/bin/ && \
-    rm -rf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox/
-
-# Install geoip
-ADD http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz GeoIP.dat.gz
-RUN gunzip GeoIP.dat.gz && \
-    mkdir /usr/share/GeoIP/ && \
-    mv GeoIP.dat /usr/share/GeoIP/ && \
-    chmod a+r /usr/share/GeoIP/GeoIP.dat && \
-    rm -f GeoIP.dat.gz
-
 # Install mysqli
 RUN docker-php-ext-install mysqli && \
     docker-php-ext-enable mysqli
@@ -78,6 +57,9 @@ RUN apt-get -y install \
 
 # Install imap
 RUN apt-get -y install \
+            openssl \
+            libssl-dev \
+            libsslcommon2-dev \
             libc-client-dev \
             libkrb5-dev && \
     docker-php-ext-configure imap \
@@ -95,6 +77,27 @@ RUN apt-get -y install \
     docker-php-ext-configure memcached && \
     docker-php-ext-install memcached && \
     rm /tmp/memcached.tar.gz
+
+# Install wkhtmltopdf
+ADD https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+RUN apt-get -y install \
+            wkhtmltopdf \
+            build-essential \
+            openssl \
+            libssl-dev \
+            xorg \
+            xvfb && \
+    tar xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz && \
+    mv wkhtmltox/bin/wkhtmlto* /usr/bin/ && \
+    rm -rf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox/
+
+# Install geoip
+ADD http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz GeoIP.dat.gz
+RUN gunzip GeoIP.dat.gz && \
+    mkdir /usr/share/GeoIP/ && \
+    mv GeoIP.dat /usr/share/GeoIP/ && \
+    chmod a+r /usr/share/GeoIP/GeoIP.dat && \
+    rm -f GeoIP.dat.gz
 
 # Cleanup
 RUN apt-get clean && \
