@@ -1,4 +1,4 @@
-FROM dmstr/php-yii2:7.2-fpm-4.2
+FROM dmstr/php-yii2:7.1-fpm-3.2
 
 # Install system packages
 RUN apt-get update && \
@@ -87,7 +87,7 @@ RUN apt-get -y install \
             wkhtmltopdf \
             build-essential \
             openssl \
-            libssl1.0-dev \
+            libssl-dev \
             xorg \
             xvfb && \
     tar xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz && \
