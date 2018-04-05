@@ -1,4 +1,5 @@
 FROM dmstr/php-yii2:7.1-fpm-3.2
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Install system packages
 RUN apt-get update && \
