@@ -72,6 +72,11 @@ RUN apt-get -y install \
             --with-imap-ssl && \
     docker-php-ext-install imap
 
+# Install tidy
+RUN apt install -y libtidy-dev && \
+    docker-php-ext-install tidy && \
+    docker-php-ext-enable tidy
+
 # Install memcached
 RUN apt-get -y install \
             libpq-dev \
