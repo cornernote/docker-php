@@ -110,6 +110,11 @@ RUN printf "\n" | pecl install mailparse-2.1.6 && \
 RUN apt-get install -y libc-client-dev libkrb5-dev && \
     docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \
     docker-php-ext-install imap
+
+# Install tidy
+RUN apt install -y libtidy-dev && \
+    docker-php-ext-install tidy && \
+    docker-php-ext-enable tidy
     
 # Install wkhtmltopdf
 ADD https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
