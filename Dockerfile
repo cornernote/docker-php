@@ -22,7 +22,6 @@ RUN apt-get -y install \
             vim \
             nano \
             percona-toolkit \
-            pdftk \
         --no-install-recommends
 
 # Install supervisor
