@@ -8,6 +8,7 @@ RUN apt-get update && \
             vim \
 	    ghostscript \
             percona-toolkit \
+	    pdftk \
         --no-install-recommends
 
 # Install supervisor
