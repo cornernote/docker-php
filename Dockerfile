@@ -6,9 +6,9 @@ RUN apt-get update && \
     apt-get -y install \
             cron \
             vim \
-	    ghostscript \
+	        ghostscript \
             percona-toolkit \
-	    pdftk \
+	        pdftk \
         --no-install-recommends
 
 # Install supervisor
@@ -24,6 +24,14 @@ RUN apt-get -y install \
     gcc lockrun.c -o lockrun && \
     cp lockrun /usr/local/bin/ && \
     rm -f lockrun.c
+
+# Install codeception
+ADD https://codeception.com/codecept.phar /usr/local/bin/codecept
+RUN chmod +x /usr/local/bin/codecept
+
+# Install psysh
+ADD https://git.io/psysh /usr/local/bin/psysh
+RUN chmod +x /usr/local/bin/psysh
 
 # Install gearman
 RUN apt-get -y install \
