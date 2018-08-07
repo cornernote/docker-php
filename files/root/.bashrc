@@ -14,7 +14,7 @@ Available commands:
 
  composer
  codecept
- phpunit
+ psysh
  yii
 
 MSG
