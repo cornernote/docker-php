@@ -66,6 +66,10 @@ RUN pecl install mailparse && \
 RUN docker-php-ext-install pcntl && \
     docker-php-ext-enable pcntl
 
+# Install calendar
+RUN docker-php-ext-configure calendar && \
+    docker-php-ext-install calendar
+
 # Install ssh2
 RUN apt-get -y install \
             libssh2-1-dev && \
