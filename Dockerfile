@@ -115,7 +115,11 @@ RUN apt-get install -y libc-client-dev libkrb5-dev && \
 RUN apt install -y libtidy-dev && \
     docker-php-ext-install tidy && \
     docker-php-ext-enable tidy
-    
+
+# Install calendar
+RUN docker-php-ext-configure calendar && \
+    docker-php-ext-install calendar
+
 # Install wkhtmltopdf
 ADD https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y wkhtmltopdf openssl build-essential xorg libssl-dev xvfb && \
@@ -124,16 +128,12 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y wkhtmltopdf openssl build-
     rm -rf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox/
 
 # Install geoip
-ADD http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz GeoIP.dat.gz
-RUN gunzip GeoIP.dat.gz && \
-    mkdir /usr/share/GeoIP/ && \
-    mv GeoIP.dat /usr/share/GeoIP/ && \
-    chmod a+r /usr/share/GeoIP/GeoIP.dat && \
-    rm -f GeoIP.dat.gz
-
-# Install calendar
-RUN docker-php-ext-configure calendar && \
-    docker-php-ext-install calendar
+#ADD http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz GeoIP.dat.gz
+#RUN gunzip GeoIP.dat.gz && \
+#    mkdir /usr/share/GeoIP/ && \
+#    mv GeoIP.dat /usr/share/GeoIP/ && \
+#    chmod a+r /usr/share/GeoIP/GeoIP.dat && \
+#    rm -f GeoIP.dat.gz
 
 # Use application path
 WORKDIR /app
