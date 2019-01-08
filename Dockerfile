@@ -131,6 +131,10 @@ RUN gunzip GeoIP.dat.gz && \
     chmod a+r /usr/share/GeoIP/GeoIP.dat && \
     rm -f GeoIP.dat.gz
 
+# Install calendar
+RUN docker-php-ext-configure calendar && \
+    docker-php-ext-install calendar
+
 # Use application path
 WORKDIR /app
 
