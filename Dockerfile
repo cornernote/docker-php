@@ -14,7 +14,7 @@ RUN apt-get -y install \
             libjpeg-dev \
             libjpeg62-turbo-dev \
             libmcrypt-dev \
-            libpng12-dev \
+            libpng-dev \
             zlib1g-dev \
             mysql-client \
             openssh-client \
