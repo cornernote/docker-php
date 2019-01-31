@@ -6,16 +6,11 @@ RUN apt-get update && \
     apt-get -y install \
             cron \
             vim \
-	        ghostscript \
+	    ghostscript \
             percona-toolkit \
-	        pdftk \
+	    pdftk \
+	    rsync \
         --no-install-recommends
-
-# Install supervisor
-RUN apt-get -y install \
-            supervisor \
-            python-pip && \
-    pip install supervisor-stdout
 
 # Install lockrun
 ADD https://raw.githubusercontent.com/pushcx/lockrun/master/lockrun.c lockrun.c
@@ -23,7 +18,7 @@ RUN apt-get -y install \
             gcc && \
     gcc lockrun.c -o lockrun && \
     cp lockrun /usr/local/bin/ && \
-    rm -f lockrun.c
+    rm -f lockrun.c lockrun
 
 # Install codeception
 ADD https://codeception.com/codecept.phar /usr/local/bin/codecept
@@ -45,14 +40,6 @@ RUN apt-get -y install \
     make install && \
     docker-php-ext-enable gearman && \
     rm -rf /tmp/pecl-gearman
-
-# Install geoip
-ADD http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz GeoIP.dat.gz
-RUN gunzip GeoIP.dat.gz && \
-    mkdir /usr/share/GeoIP/ && \
-    mv GeoIP.dat /usr/share/GeoIP/ && \
-    chmod a+r /usr/share/GeoIP/GeoIP.dat && \
-    rm -f GeoIP.dat.gz
 
 # Install mysqli
 RUN docker-php-ext-install mysqli && \
@@ -121,7 +108,15 @@ RUN apt-get -y install \
             cabextract && \
     dpkg -i ttf-mscorefonts-installer_3.6_all.deb && \
     rm -f ttf-mscorefonts-installer_3.6_all.deb
-    
+
+# Install geoip
+#ADD http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz GeoIP.dat.gz
+#RUN gunzip GeoIP.dat.gz && \
+#    mkdir /usr/share/GeoIP/ && \
+#    mv GeoIP.dat /usr/share/GeoIP/ && \
+#    chmod a+r /usr/share/GeoIP/GeoIP.dat && \
+#    rm -f GeoIP.dat.gz
+
 # Cleanup
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -129,8 +124,14 @@ RUN apt-get clean && \
 # Copy configuration files
 COPY files/ /
 
-# forward logs to docker log collector
+# Forward cron logs to docker log collector
 RUN ln -sf /usr/sbin/cron /usr/sbin/crond
 
+# Install supervisor
+#RUN apt-get -y install \
+#            supervisor \
+#            python-pip && \
+#    pip install supervisor-stdout
+
 # Run supervisor
-CMD ["/usr/bin/supervisord"]
+#CMD ["/usr/bin/supervisord"]
