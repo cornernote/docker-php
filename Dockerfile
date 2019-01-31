@@ -25,7 +25,7 @@ ADD https://codeception.com/codecept.phar /usr/local/bin/codecept
 RUN chmod +x /usr/local/bin/codecept
 
 # Install psysh
-ADD https://git.io/psysh /usr/local/bin/psysh
+ADD https://psysh.org/psysh /usr/local/bin/psysh
 RUN chmod +x /usr/local/bin/psysh
 
 # Install gearman
