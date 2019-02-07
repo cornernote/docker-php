@@ -10,6 +10,7 @@ RUN apt-get update && \
             percona-toolkit \
 	    pdftk \
 	    rsync \
+	    s3cmd \
         --no-install-recommends
 
 # Install lockrun
@@ -61,7 +62,7 @@ RUN docker-php-ext-configure calendar && \
 RUN apt-get -y install \
             libssh2-1-dev && \
     git clone https://github.com/php/pecl-networking-ssh2.git /usr/src/php/ext/ssh2 && \
-	docker-php-ext-install ssh2
+    docker-php-ext-install ssh2
 
 # Install imap
 RUN apt-get -y install \
