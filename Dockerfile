@@ -89,8 +89,21 @@ RUN apt-get -y install \
     docker-php-ext-install memcached && \
     rm /tmp/memcached.tar.gz
 
-# Install wkhtmltopdf
-ADD https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+## Install wkhtmltopdf 0.12.4
+#ADD https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+#RUN apt-get -y install \
+#            wkhtmltopdf \
+#            build-essential \
+#            openssl \
+#            libssl1.0-dev \
+#            xorg \
+#            xvfb && \
+#    tar xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz && \
+#    mv wkhtmltox/bin/wkhtmlto* /usr/bin/ && \
+#    rm -rf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox/
+
+## Install wkhtmltopdf 0.12.5
+ADD https://downloads.wkhtmltopdf.org/0.12/0.12.5/wkhtmltox_0.12.5-1.stretch_amd64.deb wkhtmltox_0.12.5-1.stretch_amd64.deb
 RUN apt-get -y install \
             wkhtmltopdf \
             build-essential \
@@ -98,9 +111,8 @@ RUN apt-get -y install \
             libssl1.0-dev \
             xorg \
             xvfb && \
-    tar xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz && \
-    mv wkhtmltox/bin/wkhtmlto* /usr/bin/ && \
-    rm -rf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox/
+    dpkg -i wkhtmltox_0.12.5-1.stretch_amd64.deb && \
+    rm -f wkhtmltox_0.12.5-1.stretch_amd64.deb
 
 # Install mscorefonts
 ADD http://ftp.us.debian.org/debian/pool/contrib/m/msttcorefonts/ttf-mscorefonts-installer_3.6_all.deb ttf-mscorefonts-installer_3.6_all.deb
