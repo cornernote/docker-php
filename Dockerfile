@@ -122,13 +122,46 @@ RUN apt-get -y install \
     dpkg -i ttf-mscorefonts-installer_3.6_all.deb && \
     rm -f ttf-mscorefonts-installer_3.6_all.deb
 
+# Install v8js
+RUN apt-get -y install \
+        build-essential \
+        curl \
+        git \
+        python \
+        libglib2.0-dev \
+        patchelf
+RUN cd /tmp && \
+    git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+ENV PATH="/tmp/depot_tools:${PATH}"
+RUN cd /tmp && \
+    fetch v8 && \
+    cd /tmp/v8 && \
+    git checkout 7.5.288.23 && \
+    gclient sync && \
+    tools/dev/v8gen.py -vv x64.release -- is_component_build=true use_custom_libcxx=false && \
+    ninja -C out.gn/x64.release/ && \
+    mkdir -p /opt/v8/{lib,include} && \
+    cp out.gn/x64.release/lib*.so out.gn/x64.release/*_blob.bin out.gn/x64.release/icudtl.dat /opt/v8/lib/ && \
+    cp -R include/* /opt/v8/include/ && \
+    for A in /opt/v8/lib/*.so; do patchelf --set-rpath '$ORIGIN' $A; done
+
+# Install phpv8
+RUN cd /tmp && \
+    git clone https://github.com/phpv8/v8js.git && \
+    cd /tmp/v8js && \
+    phpize && \
+    ./configure --with-v8js=/opt/v8 LDFLAGS="-lstdc++" && \
+    make && \
+    make install && \
+    echo extension=v8js.so >> /usr/local/etc/php/conf.d/v8js.ini
+
 # Install geoip
-#ADD http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz GeoIP.dat.gz
-#RUN gunzip GeoIP.dat.gz && \
-#    mkdir /usr/share/GeoIP/ && \
-#    mv GeoIP.dat /usr/share/GeoIP/ && \
-#    chmod a+r /usr/share/GeoIP/GeoIP.dat && \
-#    rm -f GeoIP.dat.gz
+ADD https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz GeoLite2-City.tar.gz
+RUN tar xfz GeoLite2-City.tar.gz && \
+    mkdir /usr/share/GeoIP/ && \
+    mv GeoLite2-City_20191105/GeoLite2-City.mmdb /usr/share/GeoIP/ && \
+    chmod a+r /usr/share/GeoIP/GeoLite2-City.mmdb && \
+    rm -rf GeoLite2-City.tar.gz GeoLite2-City_20191105/
 
 # Cleanup
 RUN apt-get clean && \
