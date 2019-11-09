@@ -6,16 +6,12 @@ RUN apt-get update && \
     apt-get -y install \
             cron \
             vim \
-	        ghostscript \
+	    ghostscript \
             percona-toolkit \
-	        pdftk \
+	    pdftk \
+	    rsync \
+	    s3cmd \
         --no-install-recommends
-
-# Install supervisor
-RUN apt-get -y install \
-            supervisor \
-            python-pip && \
-    pip install supervisor-stdout
 
 # Install lockrun
 ADD https://raw.githubusercontent.com/pushcx/lockrun/master/lockrun.c lockrun.c
@@ -23,14 +19,14 @@ RUN apt-get -y install \
             gcc && \
     gcc lockrun.c -o lockrun && \
     cp lockrun /usr/local/bin/ && \
-    rm -f lockrun.c
+    rm -f lockrun.c lockrun
 
 # Install codeception
 ADD https://codeception.com/codecept.phar /usr/local/bin/codecept
 RUN chmod +x /usr/local/bin/codecept
 
 # Install psysh
-ADD https://git.io/psysh /usr/local/bin/psysh
+ADD https://psysh.org/psysh /usr/local/bin/psysh
 RUN chmod +x /usr/local/bin/psysh
 
 # Install gearman
@@ -46,14 +42,6 @@ RUN apt-get -y install \
     docker-php-ext-enable gearman && \
     rm -rf /tmp/pecl-gearman
 
-# Install geoip
-ADD http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz GeoIP.dat.gz
-RUN gunzip GeoIP.dat.gz && \
-    mkdir /usr/share/GeoIP/ && \
-    mv GeoIP.dat /usr/share/GeoIP/ && \
-    chmod a+r /usr/share/GeoIP/GeoIP.dat && \
-    rm -f GeoIP.dat.gz
-
 # Install mysqli
 RUN docker-php-ext-install mysqli && \
     docker-php-ext-enable mysqli
@@ -66,11 +54,15 @@ RUN pecl install mailparse && \
 RUN docker-php-ext-install pcntl && \
     docker-php-ext-enable pcntl
 
+# Install calendar
+RUN docker-php-ext-configure calendar && \
+    docker-php-ext-install calendar
+
 # Install ssh2
 RUN apt-get -y install \
             libssh2-1-dev && \
     git clone https://github.com/php/pecl-networking-ssh2.git /usr/src/php/ext/ssh2 && \
-	docker-php-ext-install ssh2
+    docker-php-ext-install ssh2
 
 # Install imap
 RUN apt-get -y install \
@@ -97,8 +89,21 @@ RUN apt-get -y install \
     docker-php-ext-install memcached && \
     rm /tmp/memcached.tar.gz
 
-# Install wkhtmltopdf
-ADD https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+## Install wkhtmltopdf 0.12.4
+#ADD https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+#RUN apt-get -y install \
+#            wkhtmltopdf \
+#            build-essential \
+#            openssl \
+#            libssl1.0-dev \
+#            xorg \
+#            xvfb && \
+#    tar xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz && \
+#    mv wkhtmltox/bin/wkhtmlto* /usr/bin/ && \
+#    rm -rf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox/
+
+## Install wkhtmltopdf 0.12.5
+ADD https://downloads.wkhtmltopdf.org/0.12/0.12.5/wkhtmltox_0.12.5-1.stretch_amd64.deb wkhtmltox_0.12.5-1.stretch_amd64.deb
 RUN apt-get -y install \
             wkhtmltopdf \
             build-essential \
@@ -106,9 +111,8 @@ RUN apt-get -y install \
             libssl1.0-dev \
             xorg \
             xvfb && \
-    tar xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz && \
-    mv wkhtmltox/bin/wkhtmlto* /usr/bin/ && \
-    rm -rf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox/
+    dpkg -i wkhtmltox_0.12.5-1.stretch_amd64.deb && \
+    rm -f wkhtmltox_0.12.5-1.stretch_amd64.deb
 
 # Install mscorefonts
 ADD http://ftp.us.debian.org/debian/pool/contrib/m/msttcorefonts/ttf-mscorefonts-installer_3.6_all.deb ttf-mscorefonts-installer_3.6_all.deb
@@ -117,7 +121,48 @@ RUN apt-get -y install \
             cabextract && \
     dpkg -i ttf-mscorefonts-installer_3.6_all.deb && \
     rm -f ttf-mscorefonts-installer_3.6_all.deb
-    
+
+# Install v8js
+RUN apt-get -y install \
+        build-essential \
+        curl \
+        git \
+        python \
+        libglib2.0-dev \
+        patchelf
+RUN cd /tmp && \
+    git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+ENV PATH="/tmp/depot_tools:${PATH}"
+RUN cd /tmp && \
+    fetch v8 && \
+    cd /tmp/v8 && \
+    git checkout 7.5.288.23 && \
+    gclient sync && \
+    tools/dev/v8gen.py -vv x64.release -- is_component_build=true use_custom_libcxx=false && \
+    ninja -C out.gn/x64.release/ && \
+    mkdir -p /opt/v8/{lib,include} && \
+    cp out.gn/x64.release/lib*.so out.gn/x64.release/*_blob.bin out.gn/x64.release/icudtl.dat /opt/v8/lib/ && \
+    cp -R include/* /opt/v8/include/ && \
+    for A in /opt/v8/lib/*.so; do patchelf --set-rpath '$ORIGIN' $A; done
+
+# Install phpv8
+RUN cd /tmp && \
+    git clone https://github.com/phpv8/v8js.git && \
+    cd /tmp/v8js && \
+    phpize && \
+    ./configure --with-v8js=/opt/v8 LDFLAGS="-lstdc++" && \
+    make && \
+    make install && \
+    echo extension=v8js.so >> /usr/local/etc/php/conf.d/v8js.ini
+
+# Install geoip
+ADD https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz GeoLite2-City.tar.gz
+RUN tar xfz GeoLite2-City.tar.gz && \
+    mkdir /usr/share/GeoIP/ && \
+    mv GeoLite2-City_20191105/GeoLite2-City.mmdb /usr/share/GeoIP/ && \
+    chmod a+r /usr/share/GeoIP/GeoLite2-City.mmdb && \
+    rm -rf GeoLite2-City.tar.gz GeoLite2-City_20191105/
+
 # Cleanup
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -125,8 +170,14 @@ RUN apt-get clean && \
 # Copy configuration files
 COPY files/ /
 
-# forward logs to docker log collector
+# Forward cron logs to docker log collector
 RUN ln -sf /usr/sbin/cron /usr/sbin/crond
 
+# Install supervisor
+#RUN apt-get -y install \
+#            supervisor \
+#            python-pip && \
+#    pip install supervisor-stdout
+
 # Run supervisor
-CMD ["/usr/bin/supervisord"]
+#CMD ["/usr/bin/supervisord"]
