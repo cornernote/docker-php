@@ -140,7 +140,8 @@ RUN cd /tmp && \
     gclient sync && \
     tools/dev/v8gen.py -vv x64.release -- is_component_build=true use_custom_libcxx=false && \
     ninja -C out.gn/x64.release/ && \
-    mkdir -p /opt/v8/{lib,include} && \
+    mkdir -p /opt/v8/lib && \
+    mkdir -p /opt/v8/include && \
     cp out.gn/x64.release/lib*.so out.gn/x64.release/*_blob.bin out.gn/x64.release/icudtl.dat /opt/v8/lib/ && \
     cp -R include/* /opt/v8/include/ && \
     for A in /opt/v8/lib/*.so; do patchelf --set-rpath '$ORIGIN' $A; done
