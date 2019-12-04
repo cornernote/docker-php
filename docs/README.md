@@ -26,6 +26,13 @@ docker login
 docker push cornernote/php:7.3.12-fpm-stretch
 ```
 
+## Shell into Image
+
+```
+docker-compose run --rm php bash
+```
+
+
 ## Usage Example
 
 ### `docker-compose.yml`
