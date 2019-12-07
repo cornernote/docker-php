@@ -4,13 +4,17 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install system packages
 RUN apt-get update && \
     apt-get -y install \
+            iputils-ping \
             cron \
             vim \
-	    ghostscript \
+            ghostscript \
             percona-toolkit \
-	    pdftk \
-	    rsync \
-	    s3cmd \
+            pdftk \
+            rsync \
+            s3cmd \
+            nagios-nrpe-server \
+            nagios-plugins \
+            mlocate \
         --no-install-recommends
 
 # Install lockrun
