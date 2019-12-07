@@ -161,12 +161,13 @@ RUN cd /tmp && \
     echo extension=v8js.so >> /usr/local/etc/php/conf.d/v8js.ini
 
 # Install geoip
-ADD https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz GeoLite2-City.tar.gz
-RUN tar xfz GeoLite2-City.tar.gz && \
+RUN curl -L https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz \
+        -o GeoLite2-City.tar.gz && \
+    tar xfz GeoLite2-City.tar.gz && \
     mkdir /usr/share/GeoIP/ && \
-    mv GeoLite2-City_20191105/GeoLite2-City.mmdb /usr/share/GeoIP/ && \
+    mv GeoLite2-City_20*/GeoLite2-City.mmdb /usr/share/GeoIP/ && \
     chmod a+r /usr/share/GeoIP/GeoLite2-City.mmdb && \
-    rm -rf GeoLite2-City.tar.gz GeoLite2-City_20191105/
+    rm -rf GeoLite2-City.tar.gz GeoLite2-City_20*/
 
 # Cleanup
 RUN apt-get clean && \
