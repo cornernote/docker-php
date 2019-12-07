@@ -3,9 +3,25 @@
 # ==============================================
 
 FROM php:7.3.12-fpm-stretch
-ENV DEBIAN_FRONTEND=noninteractive
 
-RUN curl -sL https://deb.nodesource.com/setup_11.x | bash - && \
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive \
+    PHP_USER_ID=33 \
+    PHP_ENABLE_XDEBUG=0 \
+    VERSION_COMPOSER_ASSET_PLUGIN=^1.4.3 \
+    VERSION_PRESTISSIMO_PLUGIN=^0.3.0 \
+    PATH=/app:/app/vendor/bin:/root/.composer/vendor/bin:/tmp/depot_tools:$PATH \
+    TERM=linux \
+    COMPOSER_ALLOW_SUPERUSER=1
+
+
+## Install base OS packages
+RUN pwd && \
+
+    # Install node
+    curl -sL https://deb.nodesource.com/setup_11.x | bash - && \
+
+    # Install packages
     apt-get update && \
     apt-get -y install \
             apt-utils \
@@ -48,18 +64,66 @@ RUN curl -sL https://deb.nodesource.com/setup_11.x | bash - && \
             nodejs \
             npm \
             libtidy-dev \
+            libgearman-dev \
+            libssh2-1-dev \
         --no-install-recommends && \
     apt-get clean && \
-    npm -g install npm@latest
 
-# Install supervisor
-RUN apt-get -y install \
-            supervisor \
-            python-pip && \
-    pip install supervisor-stdout
+    ## Install npm
+    npm -g install npm@latest && \
 
-# Install PHP extensions required for Yii 2.0 Framework
-RUN docker-php-ext-configure gd \
+    # Install less-compiler
+    npm install -g \
+        less \
+        lesshint \
+        uglify-js \
+        uglifycss && \
+
+    # Install lockrun
+    cd /tmp && \
+    curl -L https://raw.githubusercontent.com/pushcx/lockrun/master/lockrun.c \
+        -o lockrun.c && \
+    gcc lockrun.c -o lockrun && \
+    cp lockrun /usr/local/bin/ && \
+
+    ## Install wkhtmltopdf 0.12.5
+    curl -L https://downloads.wkhtmltopdf.org/0.12/0.12.5/wkhtmltox_0.12.5-1.stretch_amd64.deb \
+        -o wkhtmltox_0.12.5-1.stretch_amd64.deb && \
+    apt-get -y install \
+            wkhtmltopdf \
+            build-essential \
+            openssl \
+            libssl1.0-dev \
+            xorg \
+            xvfb && \
+    dpkg -i wkhtmltox_0.12.5-1.stretch_amd64.deb && \
+    rm -f wkhtmltox_0.12.5-1.stretch_amd64.deb && \
+    # Install mscorefonts
+    curl -L http://ftp.us.debian.org/debian/pool/contrib/m/msttcorefonts/ttf-mscorefonts-installer_3.6_all.deb \
+        -o ttf-mscorefonts-installer_3.6_all.deb && \
+    apt-get -y install \
+            cabextract && \
+    dpkg -i ttf-mscorefonts-installer_3.6_all.deb && \
+    rm -f ttf-mscorefonts-installer_3.6_all.deb && \
+
+    # Install geoip
+    curl -L https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz \
+        -o GeoLite2-City.tar.gz && \
+    tar xfz GeoLite2-City.tar.gz && \
+    mkdir /usr/share/GeoIP/ && \
+    mv GeoLite2-City_20*/GeoLite2-City.mmdb /usr/share/GeoIP/ && \
+    chmod a+r /usr/share/GeoIP/GeoLite2-City.mmdb && \
+    rm -rf GeoLite2-City.tar.gz GeoLite2-City_20*/ && \
+
+    # Cleanup
+    apt-get -y autoremove && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+
+# Install PHP extensions
+RUN git clone https://github.com/php/pecl-networking-ssh2.git /usr/src/php/ext/ssh2 && \
+    docker-php-ext-configure gd \
         --with-freetype-dir=/usr/include/ \
         --with-png-dir=/usr/include/ \
         --with-jpeg-dir=/usr/include/ && \
@@ -80,11 +144,12 @@ RUN docker-php-ext-configure gd \
             mysqli \
             pcntl \
             calendar \
-            tidy
+            tidy \
+            ssh2 && \
 
-# Install PECL extensions
-# see http://stackoverflow.com/a/8154466/291573) for usage of `printf`
-RUN printf "\n" | pecl install \
+    # Install PECL extensions
+    # see http://stackoverflow.com/a/8154466/291573) for usage of `printf`
+    printf "\n" | pecl install \
         apcu \
         imagick \
         mailparse \
@@ -92,10 +157,10 @@ RUN printf "\n" | pecl install \
     docker-php-ext-enable \
         apcu \
         imagick \
-        mailparse
+        mailparse && \
 
-# Install xdebug
-RUN cd /tmp && \
+    # Install xdebug
+    cd /tmp && \
     git clone git://github.com/xdebug/xdebug.git && \
     cd xdebug && \
     git checkout 2.8.1 && \
@@ -103,11 +168,8 @@ RUN cd /tmp && \
     ./configure --enable-xdebug && \
     make && \
     make install && \
-    rm -rf /tmp/xdebug
 
-# Install gearman
-RUN apt-get -y install \
-            libgearman-dev && \
+    # Install gearman
     cd /tmp && \
     git clone https://github.com/wcgallego/pecl-gearman.git && \
     cd pecl-gearman && \
@@ -116,122 +178,52 @@ RUN apt-get -y install \
     make && \
     make install && \
     docker-php-ext-enable gearman && \
-    rm -rf /tmp/pecl-gearman
 
-# Install ssh2
-RUN apt-get -y install \
-            libssh2-1-dev && \
-    git clone https://github.com/php/pecl-networking-ssh2.git /usr/src/php/ext/ssh2 && \
-    docker-php-ext-install ssh2
-
-# Install imap
-RUN apt-get -y install \
-            libc-client-dev \
-            libkrb5-dev && \
-    docker-php-ext-configure imap \
-            --with-kerberos \
-            --with-imap-ssl && \
-    docker-php-ext-install imap
-
-## Install memcached
-#RUN apt-get -y install \
-#            libpq-dev \
-#            libmemcached-dev && \
-#    curl -L -o /tmp/memcached.tar.gz "https://github.com/php-memcached-dev/php-memcached/archive/php7.tar.gz" && \
-#    mkdir -p /usr/src/php/ext/memcached && \
-#    tar -C /usr/src/php/ext/memcached -zxvf /tmp/memcached.tar.gz --strip 1 && \
-#    docker-php-ext-configure memcached && \
-#    docker-php-ext-install memcached && \
-#    rm /tmp/memcached.tar.gz
-
-# Install less-compiler
-RUN npm install -g \
-        less \
-        lesshint \
-        uglify-js \
-        uglifycss
-
-# Copy configuration files
-COPY files/ /
-
-# Set environment variables
-ENV PHP_USER_ID=33 \
-    PHP_ENABLE_XDEBUG=0 \
-    VERSION_COMPOSER_ASSET_PLUGIN=^1.4.3 \
-    VERSION_PRESTISSIMO_PLUGIN=^0.3.0 \
-    PATH=/app:/app/vendor/bin:/root/.composer/vendor/bin:$PATH \
-    TERM=linux \
-    COMPOSER_ALLOW_SUPERUSER=1
-
-# Add GITHUB_API_TOKEN support for composer
-RUN chmod 700 \
-        /usr/local/bin/docker-entrypoint.sh \
-        /usr/local/bin/docker-run.sh \
-        /usr/local/bin/composer
-
-# Install composer
-RUN curl -sS https://getcomposer.org/installer | php -- \
+    # Install composer
+    curl -sS https://getcomposer.org/installer | php -- \
         --filename=composer \
         --install-dir=/usr/local/bin && \
     composer global require --optimize-autoloader \
         "fxp/composer-asset-plugin:${VERSION_COMPOSER_ASSET_PLUGIN}" \
         "hirak/prestissimo:${VERSION_PRESTISSIMO_PLUGIN}" && \
     composer global dumpautoload --optimize && \
-    composer clear-cache
+    composer clear-cache && \
 
-# Install lockrun
-RUN curl -L https://raw.githubusercontent.com/pushcx/lockrun/master/lockrun.c \
-        -o lockrun.c && \
-    gcc lockrun.c -o lockrun && \
-    cp lockrun /usr/local/bin/ && \
-    rm -f lockrun.c lockrun
+    # Install Yii framework bash autocompletion
+    curl -L https://raw.githubusercontent.com/yiisoft/yii2/master/contrib/completion/bash/yii \
+        -o /etc/bash_completion.d/yii && \
 
-# Install Yii framework bash autocompletion
-RUN curl -L https://raw.githubusercontent.com/yiisoft/yii2/master/contrib/completion/bash/yii \
-        -o /etc/bash_completion.d/yii
-
-# Install codeception
-RUN curl -L https://codeception.com/codecept.phar \
+    # Install codeception
+    curl -L https://codeception.com/codecept.phar \
         -o /usr/local/bin/codecept && \
-    chmod +x /usr/local/bin/codecept
 
-# Install psysh
-RUN curl -L https://psysh.org/psysh \
+    # Install psysh
+    curl -L https://psysh.org/psysh \
         -o /usr/local/bin/psysh && \
-    chmod +x /usr/local/bin/psysh
 
-## Install wkhtmltopdf 0.12.5
-RUN curl -L https://downloads.wkhtmltopdf.org/0.12/0.12.5/wkhtmltox_0.12.5-1.stretch_amd64.deb \
-        -o wkhtmltox_0.12.5-1.stretch_amd64.deb && \
-    apt-get -y install \
-            wkhtmltopdf \
-            build-essential \
-            openssl \
-            libssl1.0-dev \
-            xorg \
-            xvfb && \
-    dpkg -i wkhtmltox_0.12.5-1.stretch_amd64.deb && \
-    rm -f wkhtmltox_0.12.5-1.stretch_amd64.deb && \
-    # Install mscorefonts
-    curl -L http://ftp.us.debian.org/debian/pool/contrib/m/msttcorefonts/ttf-mscorefonts-installer_3.6_all.deb \
-        -o ttf-mscorefonts-installer_3.6_all.deb && \
-    apt-get -y install \
-            cabextract && \
-    dpkg -i ttf-mscorefonts-installer_3.6_all.deb && \
-    rm -f ttf-mscorefonts-installer_3.6_all.deb
+    # Cleanup
+    apt-get -y autoremove && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Install geoip
-RUN curl -L https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz \
-        -o GeoLite2-City.tar.gz && \
-    tar xfz GeoLite2-City.tar.gz && \
-    mkdir /usr/share/GeoIP/ && \
-    mv GeoLite2-City_20*/GeoLite2-City.mmdb /usr/share/GeoIP/ && \
-    chmod a+r /usr/share/GeoIP/GeoLite2-City.mmdb && \
-    rm -rf GeoLite2-City.tar.gz GeoLite2-City_20*/
+# Install imap
+RUN apt-get update && \
+    apt-get install -y \
+            libc-client-dev \
+            libkrb5-dev && \
+    docker-php-ext-configure imap \
+        --with-kerberos \
+        --with-imap-ssl && \
+    docker-php-ext-install imap && \
+    # Cleanup
+    apt-get -y autoremove && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 
 # Install v8js
-ENV PATH="/tmp/depot_tools:${PATH}"
-RUN apt-get -y install \
+RUN apt-get update && \
+    apt-get -y install \
         build-essential \
         curl \
         git \
@@ -260,20 +252,53 @@ RUN apt-get -y install \
     make && \
     make install && \
     echo extension=v8js.so >> /usr/local/etc/php/conf.d/v8js.ini && \
+
+    # Forward cron logs to docker log collector
+    ln -sf /usr/sbin/cron /usr/sbin/crond && \
+
     # Cleanup
     apt-get -y autoremove && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Use /app as working directory
+
+# Copy configuration files
+COPY files/ /
+
+# Set executibale scripts
+RUN chmod 700 \
+        /usr/local/bin/nrpe-entrypoint.sh \
+        /usr/local/bin/nrpe-run.sh \
+        /usr/local/bin/cron-entrypoint.sh \
+        /usr/local/bin/cron-run.sh \
+        /usr/local/bin/php-entrypoint.sh \
+        /usr/local/bin/php-run.sh \
+        /usr/local/bin/composer \
+        /usr/local/bin/codecept \
+        /usr/local/bin/psysh
+
+# Set app working directory
 WORKDIR /app
 
-# Forward cron logs to docker log collector
-RUN ln -sf /usr/sbin/cron /usr/sbin/crond
+# Install supervisor
+RUN apt-get update && \
+    apt-get -y install \
+            supervisor \
+            python-pip \
+    pip install supervisor-stdout && \
+    apt-get -y autoremove && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Run supervisor
+# Startup for supervisor
 #CMD ["/usr/bin/supervisord"]
 
+# Startip for cron
+#CMD ["crond -f"]
+
+# Startip for nagios-nrpe
+#CMD ["nrpe"]
+
 # Startup script for FPM
-ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
-CMD ["docker-run.sh"]
+ENTRYPOINT ["/usr/local/bin/php-entrypoint.sh"]
+CMD ["php-run.sh"]
