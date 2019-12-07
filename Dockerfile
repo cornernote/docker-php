@@ -271,12 +271,10 @@ COPY files/ /
 
 # Set executibale scripts
 RUN chmod 700 \
-#        /usr/local/bin/cron-entrypoint.sh \
-#        /usr/local/bin/cron-run.sh \
-        /usr/local/bin/nrpe-entrypoint.sh \
+        /usr/local/bin/cron-run.sh \
         /usr/local/bin/nrpe-run.sh \
-        /usr/local/bin/php-entrypoint.sh \
         /usr/local/bin/php-run.sh \
+        /usr/local/bin/php-entrypoint.sh \
         /usr/local/bin/composer \
         /usr/local/bin/codecept \
         /usr/local/bin/psysh
