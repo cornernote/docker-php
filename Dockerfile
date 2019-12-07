@@ -259,7 +259,7 @@ RUN apt-get update && \
 RUN apt-get update && \
     apt-get -y install \
             supervisor \
-            python-pip \
+            python-pip && \
     # Cleanup
     apt-get -y autoremove && \
     apt-get clean && \
