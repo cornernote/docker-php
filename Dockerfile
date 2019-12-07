@@ -66,6 +66,9 @@ RUN pwd && \
         --no-install-recommends && \
     apt-get clean && \
 
+    # Forward cron logs to docker log collector
+    ln -sf /usr/sbin/cron /usr/sbin/crond && \
+
     ## Install npm
     npm -g install npm@latest && \
 
@@ -247,14 +250,21 @@ RUN apt-get update && \
     make && \
     make install && \
     echo extension=v8js.so >> /usr/local/etc/php/conf.d/v8js.ini && \
-
-    # Forward cron logs to docker log collector
-    ln -sf /usr/sbin/cron /usr/sbin/crond && \
-
     # Cleanup
     apt-get -y autoremove && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Install supervisor
+RUN apt-get update && \
+    apt-get -y install \
+            supervisor \
+            python-pip \
+    # Cleanup
+    apt-get -y autoremove && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN pip install supervisor-stdout
 
 # Copy configuration files
 COPY files/ /
@@ -273,16 +283,6 @@ RUN chmod 700 \
 
 # Set app working directory
 WORKDIR /app
-
-# Install supervisor
-RUN apt-get update && \
-    apt-get -y install \
-            supervisor \
-            python-pip \
-    pip install supervisor-stdout && \
-    apt-get -y autoremove && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Startup for supervisor
 #CMD ["/usr/bin/supervisord"]
