@@ -8,12 +8,9 @@ FROM php:7.3.12-fpm-stretch
 ENV DEBIAN_FRONTEND=noninteractive \
     PHP_USER_ID=33 \
     PHP_ENABLE_XDEBUG=0 \
-    VERSION_COMPOSER_ASSET_PLUGIN=^1.4.3 \
-    VERSION_PRESTISSIMO_PLUGIN=^0.3.0 \
     PATH=/app:/app/vendor/bin:/root/.composer/vendor/bin:/tmp/depot_tools:$PATH \
     TERM=linux \
     COMPOSER_ALLOW_SUPERUSER=1
-
 
 ## Install base OS packages
 RUN pwd && \
@@ -120,7 +117,6 @@ RUN pwd && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-
 # Install PHP extensions
 RUN git clone https://github.com/php/pecl-networking-ssh2.git /usr/src/php/ext/ssh2 && \
     docker-php-ext-configure gd \
@@ -184,8 +180,8 @@ RUN git clone https://github.com/php/pecl-networking-ssh2.git /usr/src/php/ext/s
         --filename=composer \
         --install-dir=/usr/local/bin && \
     composer global require --optimize-autoloader \
-        "fxp/composer-asset-plugin:${VERSION_COMPOSER_ASSET_PLUGIN}" \
-        "hirak/prestissimo:${VERSION_PRESTISSIMO_PLUGIN}" && \
+        "fxp/composer-asset-plugin:^1.4.3" \
+        "hirak/prestissimo:^0.3.0" && \
     composer global dumpautoload --optimize && \
     composer clear-cache && \
 
@@ -219,7 +215,6 @@ RUN apt-get update && \
     apt-get -y autoremove && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
 
 # Install v8js
 RUN apt-get update && \
@@ -261,16 +256,15 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-
 # Copy configuration files
 COPY files/ /
 
 # Set executibale scripts
 RUN chmod 700 \
+#        /usr/local/bin/cron-entrypoint.sh \
+#        /usr/local/bin/cron-run.sh \
         /usr/local/bin/nrpe-entrypoint.sh \
         /usr/local/bin/nrpe-run.sh \
-        /usr/local/bin/cron-entrypoint.sh \
-        /usr/local/bin/cron-run.sh \
         /usr/local/bin/php-entrypoint.sh \
         /usr/local/bin/php-run.sh \
         /usr/local/bin/composer \
