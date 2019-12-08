@@ -271,7 +271,7 @@ COPY files/ /
 
 # Set executibale scripts
 RUN chmod 700 \
-        #/usr/local/bin/cron-entrypoint.sh \
+        /usr/local/bin/cron-entrypoint.sh \
         /usr/local/bin/cron-run.sh \
         /usr/local/bin/nrpe-entrypoint.sh \
         /usr/local/bin/nrpe-run.sh \
