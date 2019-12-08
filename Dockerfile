@@ -255,7 +255,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Install supervisor
+# Install supervisor service
 RUN apt-get update && \
     apt-get -y install \
             supervisor \
@@ -265,6 +265,25 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN pip install supervisor-stdout
+
+# Install nagios nrpe service
+RUN apt-get update && \
+    # nrpe server cannot log to std::out, so we need syslog2stdout (package is provided at apt.binfalse.de)
+    apt-get install -y \
+            gnupg \
+            dirmngr \
+        --no-install-recommends && \
+    gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys E81BC3078D2DD9BD && \
+    gpg -a --export E81BC3078D2DD9BD | apt-key add - && \
+    echo "deb http://apt.binfalse.de binfalse main" > "/etc/apt/sources.list.d/binfalse.list" && \
+    apt-get update && \
+    apt-get install -y \
+            nagios-nrpe-server \
+            nagios-plugins \
+            bf-syslog2stdout \
+        --no-install-recommends && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Copy configuration files
 COPY files/ /
@@ -285,7 +304,8 @@ RUN chmod 700 \
 WORKDIR /app
 
 # Startup for supervisor
-#CMD ["/usr/bin/supervisord"]
+##ENTRYPOINT ["/usr/local/bin/supervisor-entrypoint.sh"]
+#CMD ["supervisor-run.sh"]
 
 # Startip for cron
 ##ENTRYPOINT ["/usr/local/bin/cron-entrypoint.sh"]
