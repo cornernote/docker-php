@@ -5,6 +5,9 @@
 # Fail on any error
 set -o errexit
 
+# run the fake syslog to print the log to std::out
+/bin/syslog2stdout /dev/log &
+
 # Set permissions based on ENV variable (debian only)
 if [ -x "usermod" ] ; then
     usermod -u ${PHP_USER_ID} www-data
