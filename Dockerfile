@@ -63,6 +63,8 @@ RUN pwd && \
             libtidy-dev \
             libgearman-dev \
             libssh2-1-dev \
+            netcat \
+            gearman \
         --no-install-recommends && \
     apt-get clean && \
 
@@ -180,13 +182,13 @@ RUN git clone https://github.com/php/pecl-networking-ssh2.git /usr/src/php/ext/s
 
     # Install composer
     curl -sS https://getcomposer.org/installer | php -- \
-        --filename=composer \
+        --filename=composer.phar \
         --install-dir=/usr/local/bin && \
-    composer global require --optimize-autoloader \
+    composer.phar global require --optimize-autoloader \
         "fxp/composer-asset-plugin:^1.4.3" \
         "hirak/prestissimo:^0.3.0" && \
-    composer global dumpautoload --optimize && \
-    composer clear-cache && \
+    composer.phar global dumpautoload --optimize && \
+    composer.phar clear-cache && \
 
     # Install Yii framework bash autocompletion
     curl -L https://raw.githubusercontent.com/yiisoft/yii2/master/contrib/completion/bash/yii \
