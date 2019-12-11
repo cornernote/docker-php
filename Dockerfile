@@ -291,7 +291,8 @@ RUN apt-get update && \
 COPY files/ /
 
 # Set executibale scripts
-RUN chmod 700 \
+RUN ln -s /usr/local/bin/php /usr/bin/php && \
+    chmod 700 \
         /usr/local/bin/cron-entrypoint.sh \
         /usr/local/bin/cron-run.sh \
         /usr/local/bin/nrpe-entrypoint.sh \
