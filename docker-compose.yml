@@ -6,3 +6,14 @@ services:
     build:
       dockerfile: Dockerfile
       context: .
+    ## supervisor
+    #entrypoint: /usr/local/bin/supervisor-entrypoint.sh
+    #command: /usr/local/bin/supervisor-run.sh
+    ## nrpe
+    #entrypoint: /usr/local/bin/nrpe-entrypoint.sh
+    #command: /usr/local/bin/nrpe-run.sh
+    ## cron
+    #entrypoint: /usr/local/bin/cron-entrypoint.sh
+    #command: /usr/local/bin/cron-run.sh
+    #volumes:
+    #  - ./files/etc/cron.d/:/etc/cron.d/

@@ -287,11 +287,21 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+# Install inotifywait
+RUN apt-get update && \
+    apt-get install -y \
+        inotify-tools \
+        --no-install-recommends && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 # Copy configuration files
 COPY files/ /
 
 # Set executibale scripts
 RUN ln -s /usr/local/bin/php /usr/bin/php && \
+    chmod 600 \
+        /etc/cron.d/app && \
     chmod 700 \
         /usr/local/bin/cron-entrypoint.sh \
         /usr/local/bin/cron-run.sh \

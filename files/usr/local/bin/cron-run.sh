@@ -10,7 +10,16 @@ set -o errexit
 
 # Set crontab
 touch /etc/default/locale
-crontab -u www-data /etc/app.cron
+crontab -u www-data /etc/cron.d/app
 
 # Start cron
-cron -f
+#cron -f
+cron
+
+# Check if schedule changed
+while inotifywait -q /etc/cron.d/app; do
+  echo "Cron changes detected. Will reload cron schedule in 10 seconds..."
+  sleep 10
+  echo "Reloading cron schedule"
+  crontab -u www-data /etc/cron.d/app
+done
