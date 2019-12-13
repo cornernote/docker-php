@@ -16,8 +16,8 @@ docker images
 Tag image:
 
 ```
-docker tag fc957ecfe938 cornernote/php:7.3.12-fpm-stretch
-docker tag fc957ecfe938 cornernote/php:latest
+docker tag 393ac152eb55 cornernote/php:7.3.12-fpm-stretch
+docker tag 393ac152eb55 cornernote/php:latest
 ```
 
 Push to hub.docker.com:

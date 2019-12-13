@@ -48,7 +48,6 @@ RUN pwd && \
             libxml2-dev \
             nano \
             linkchecker \
-            cron \
             vim \
             iputils-ping \
             ghostscript \
@@ -65,11 +64,9 @@ RUN pwd && \
             libssh2-1-dev \
             netcat \
             gearman \
+            inotify-tools \
         --no-install-recommends && \
     apt-get clean && \
-
-    # Forward cron logs to docker log collector
-    ln -sf /usr/sbin/cron /usr/sbin/crond && \
 
     ## Install npm
     npm -g install npm@latest && \
@@ -268,6 +265,18 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN pip install supervisor-stdout
 
+# Install cron service
+RUN apt-get update && \
+    apt-get -y install \
+              cron \
+        --no-install-recommends && \
+    # Forward cron logs to docker log collector
+    ln -sf /usr/sbin/cron /usr/sbin/crond && \
+    # Cleanup
+    apt-get -y autoremove && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 # Install nagios nrpe service
 RUN apt-get update && \
     # nrpe server cannot log to std::out, so we need syslog2stdout (package is provided at apt.binfalse.de)
@@ -283,14 +292,6 @@ RUN apt-get update && \
             nagios-nrpe-server \
             nagios-plugins \
             bf-syslog2stdout \
-        --no-install-recommends && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# Install inotifywait
-RUN apt-get update && \
-    apt-get install -y \
-        inotify-tools \
         --no-install-recommends && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

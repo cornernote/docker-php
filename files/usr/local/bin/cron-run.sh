@@ -17,7 +17,7 @@ crontab -u www-data /etc/cron.d/app
 cron
 
 # Check if schedule changed
-while inotifywait -q /etc/cron.d/app; do
+while inotifywait -q -e modify,create,delete,move,move_self /etc/cron.d/app; do
   echo "Cron changes detected. Will reload cron schedule in 10 seconds..."
   sleep 10
   echo "Reloading cron schedule"
