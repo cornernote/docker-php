@@ -99,7 +99,7 @@ RUN apt-get install -y imagemagick libmagickwand-dev libmagickcore-dev && \
     docker-php-ext-enable imagick
 
 # Install memcached
-RUN printf "\n" | pecl install memcache && \
+RUN printf "\n" | pecl install memcache-3.0.8 && \
     docker-php-ext-enable memcache
 
 # Install mailparse
