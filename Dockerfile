@@ -1,6 +1,8 @@
 FROM php:5.6-fpm
 WORKDIR /root
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Update package info
 RUN apt-get update 
 
@@ -22,6 +24,7 @@ RUN apt-get -y install \
             vim \
             nano \
             percona-toolkit \
+            wget \
         --no-install-recommends
 
 # Install supervisor
@@ -99,8 +102,10 @@ RUN apt-get install -y imagemagick libmagickwand-dev libmagickcore-dev && \
     docker-php-ext-enable imagick
 
 # Install memcached
+ENV CFLAGS="-fgnu89-inline"
 RUN printf "\n" | pecl install memcache-3.0.8 && \
     docker-php-ext-enable memcache
+ENV CFLAGS=""
 
 # Install mailparse
 RUN printf "\n" | pecl install mailparse-2.1.6 && \
@@ -120,12 +125,25 @@ RUN apt install -y libtidy-dev && \
 RUN docker-php-ext-configure calendar && \
     docker-php-ext-install calendar
 
-# Install wkhtmltopdf
-ADD https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y wkhtmltopdf openssl build-essential xorg libssl-dev xvfb && \
-    tar xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz && \
-    mv wkhtmltox/bin/wkhtmlto* /usr/bin/ && \
-    rm -rf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz wkhtmltox/
+## Install wkhtmltopdf 0.12.5
+RUN curl -L https://downloads.wkhtmltopdf.org/0.12/0.12.5/wkhtmltox_0.12.5-1.stretch_amd64.deb \
+        -o wkhtmltox_0.12.5-1.stretch_amd64.deb && \
+    apt-get -y install \
+            wkhtmltopdf \
+            build-essential \
+            openssl \
+            libssl1.0-dev \
+            xorg \
+            xvfb && \
+    dpkg -i wkhtmltox_0.12.5-1.stretch_amd64.deb && \
+    rm -f wkhtmltox_0.12.5-1.stretch_amd64.deb && \
+    # Install mscorefonts
+    curl -L http://ftp.us.debian.org/debian/pool/contrib/m/msttcorefonts/ttf-mscorefonts-installer_3.6_all.deb \
+        -o ttf-mscorefonts-installer_3.6_all.deb && \
+    apt-get -y install \
+            cabextract && \
+    dpkg -i ttf-mscorefonts-installer_3.6_all.deb && \
+    rm -f ttf-mscorefonts-installer_3.6_all.deb
 
 # Install geoip
 #ADD http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz GeoIP.dat.gz
