@@ -25,6 +25,7 @@ RUN apt-get -y install \
             nano \
             percona-toolkit \
             wget \
+            pdftk \
         --no-install-recommends
 
 # Install supervisor
