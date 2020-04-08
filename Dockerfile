@@ -26,6 +26,7 @@ RUN apt-get -y install \
             percona-toolkit \
             wget \
             pdftk \
+            zbar-tools \
         --no-install-recommends
 
 # Install supervisor
