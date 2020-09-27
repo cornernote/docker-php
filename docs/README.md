@@ -37,7 +37,7 @@ version: '3'
 services:
 
   php:
-    image: cornernote/php:7.3-fpm-stretch
+    image: cornernote/php:7.3.22-fpm-stretch
     depends_on:
       - db
     environment:
