@@ -46,6 +46,7 @@ services:
     image: cornernote/php:7.3.22-fpm-stretch
     environment:
       - USE_SSL=1
+      - SSL_PATH=
       - DH_SIZE=2048
       - CERTBOT_EMAIL=info@example.com
       - CERTBOT_DOMAIN=example.com
