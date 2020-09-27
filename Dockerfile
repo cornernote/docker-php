@@ -255,7 +255,7 @@ RUN pip install supervisor-stdout
 
 # Install nginx service
 RUN apt-get update && \
-    apt-get install -y --force-yes \
+    apt-get -y install \
             nginx-full \
             openssl \
             gettext-base \
@@ -269,6 +269,9 @@ RUN apt-get update && \
     apt-get -y autoremove && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+VOLUME /etc/dhparam
+VOLUME /etc/letsencrypt
+VOLUME /var/letsencrypt
 
 # Install cron service
 RUN apt-get update && \

@@ -58,7 +58,14 @@ services:
     ports:
       - 80:80
       - 443:443
-
+    ## supervisor
+    #command: /usr/local/bin/supervisor-run.sh
+    #command: /usr/local/bin/php-run.sh
+    #command: /usr/local/bin/nginx-run.sh
+    #command: /usr/local/bin/nrpe-run.sh
+    #command: /usr/local/bin/cron-run.sh
+    #volumes:
+    #  - ./files/etc/cron.d/:/etc/cron.d/
   db:
     image: percona:8.0
     command: --character-set-server=utf8 --collation-server=utf8_general_ci --sql-mode="ERROR_FOR_DIVISION_BY_ZERO,IGNORE_SPACE,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE,PIPES_AS_CONCAT,REAL_AS_FLOAT"
