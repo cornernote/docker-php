@@ -8,13 +8,3 @@ services:
       context: .
     ports:
       - 80:80
-    ## supervisor
-    #command: /usr/local/bin/supervisor-run.sh
-    ## nginx
-    #command: /usr/local/bin/nginx-run.sh
-    ## nrpe
-    #command: /usr/local/bin/nrpe-run.sh
-    ## cron
-    #command: /usr/local/bin/cron-run.sh
-    #volumes:
-    #  - ./files/etc/cron.d/:/etc/cron.d/
