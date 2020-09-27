@@ -1,4 +1,4 @@
-# PHP Docker Image
+# PHP Image for Docker
 
 The image provides several services relating to serving a PHP web application.
 
