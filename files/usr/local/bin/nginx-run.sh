@@ -16,16 +16,18 @@ log() {
 set -o errexit
 
 # Generate nginx config from template
-if [ ! -n "$NGINX_ERROR_LOG_LEVEL" ] ; then
-    export NGINX_ERROR_LOG_LEVEL="warn"
+if [ ! -f /etc/nginx/nginx.conf.template ]; then
+  if [ ! -n "$NGINX_ERROR_LOG_LEVEL" ] ; then
+      export NGINX_ERROR_LOG_LEVEL="warn"
+  fi
+  if [ ! -n "$SERVER_NAME" ] ; then
+      export SERVER_NAME="app"
+  fi
+  if [ ! -n "$FASTCGI_PASS_HOST" ] ; then
+      export FASTCGI_PASS_HOST="127.0.0.1:9000"
+  fi
+  envsubst '$NGINX_ERROR_LOG_LEVEL $SERVER_NAME $FASTCGI_PASS_HOST' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 fi
-if [ ! -n "$SERVER_NAME" ] ; then
-    export SERVER_NAME="app"
-fi
-if [ ! -n "$FASTCGI_PASS_HOST" ] ; then
-    export FASTCGI_PASS_HOST="127.0.0.1:9000"
-fi
-envsubst '$NGINX_ERROR_LOG_LEVEL $SERVER_NAME $FASTCGI_PASS_HOST' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 
 # Toggle SSL
 if [ "$USE_SSL" = 1 ] ; then
@@ -41,7 +43,7 @@ if [ "$USE_SSL" = 1 ] ; then
     if [ ! -n "$CERTBOT_DOMAIN" ] ; then
         $CERTBOT_DOMAIN="app"
     fi
-    if [ ! -f /etc/letsencrypt/live/$CERTBOT_DOMAIN/privkey.pem ] ; then
+    if [ ! -f "/etc/letsencrypt/live/$CERTBOT_DOMAIN/privkey.pem" ] ; then
         log "SSL is enabled however cert is missing - removing SSL from /etc/nginx/nginx.conf"
         sed -i -r 's/(return .*301)/#;#\1/g; s/(listen .*443)/\1;#/g; s/(ssl_(certificate|certificate_key|trusted_certificate) )/#;#\1/g' /etc/nginx/nginx.conf
     fi
@@ -55,7 +57,7 @@ log "Starting nginx"
 nginx # -g 'daemon off;'
 
 # Generate certificate
-if [ "$USE_SSL" = 1 -a -n "$CERTBOT_EMAIL" -a -n "$CERTBOT_DOMAIN" -a ! -f /etc/letsencrypt/live/$CERTBOT_DOMAIN/privkey.pem ] ; then
+if [ "$USE_SSL" = 1 -a -n "$CERTBOT_EMAIL" -a -n "$CERTBOT_DOMAIN" -a ! -f "/etc/letsencrypt/live/$CERTBOT_DOMAIN/privkey.pem" ] ; then
     log "Generating SSL certificate"
     certbot certonly --noninteractive --agree-tos --email $CERTBOT_EMAIL --webroot --webroot-path /var/letsencrypt -d $CERTBOT_DOMAIN && \
     log "Certificate successfully installed - adding SSL to /etc/nginx/nginx.conf" && \
