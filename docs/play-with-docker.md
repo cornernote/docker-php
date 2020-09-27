@@ -2,41 +2,68 @@
 
 You can try this image by creating a stack on [Play with Docker](http://labs.play-with-docker.com/).
 
-Login or signup, then create a new instance. You will be presented with a linux terminal.
+After logging in you will be presented with a linux terminal.
 
 Create a `cornernote/docker-php` application definition:
 
-`cat > docker-compose.yml` (paste from below, the `CTRL+D`)
+`cat > docker-compose.yml` (paste from below, then `CTRL+D`)
 
-```
+```yaml
 version: '3'
 services:
 
   php:
-    image: cornernote/php:7.3.22-fpm-stretch
-    environment:
-      - USE_SSL=0
-      - DH_SIZE=2048
-      - CERTBOT_EMAIL=
-      - CERTBOT_DOMAIN=
-      - NGINX_ERROR_LOG_LEVEL=warn
-      - SERVER_NAME=app
-      - FASTCGI_PASS_HOST=127.0.0.1:9000
-    #volumes:
-      #- ./web:/app/web
-      #- ./src:/app/src
+    image: cornernote/php
     ports:
       - 80:80
-      #- 443:443
 ```
 
 Then start the stack
     
-```
+```shell script
 docker-compose up -d
 ```
 
 Your services will be available on their mapped port, just click the label right next to the node IP address.
+
+Next you may want to add your own PHP pages.
+
+`mkdir -p src/web && cat > src/web/index.php` (paste from below, then `CTRL+D`)
+
+```html
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Sample Page</title>
+</head>
+<body>
+<?= 'Hello World!' ?>
+</body>
+</html>
+```
+
+Update your application definition.
+
+`cat > docker-compose.yml` (paste from below, the `CTRL+D`)
+
+```yaml
+version: '3'
+services:
+
+  php:
+    image: cornernote/php
+    ports:
+      - 80:80
+    volumes:
+      - ./src:/app
+```
+
+Finally, restart the stack.
+    
+```shell script
+docker-compose up -d
+```
+
 
 ## Troubleshooting
 
@@ -46,13 +73,13 @@ If the link to the exposed port does not show then you can determine it from the
 
 Change:
 
-```
+```shell script
 ssh EXAMPLE@direct.labs.play-with-docker.com
 ```
 
 To:
 
-```
+```shell script
 http://EXAMPLE-80.direct.labs.play-with-docker.com
 ```
 
@@ -62,6 +89,6 @@ When all else fails, check the logs.
 
 Container logs:
 
-```
+```shell script
 docker-compose logs -f shinken
 ```

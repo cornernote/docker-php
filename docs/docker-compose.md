@@ -7,7 +7,7 @@ version: '3'
 services:
 
   php:
-    image: cornernote/php:7.3.22-fpm-stretch
+    image: cornernote/php
     environment:
       - USE_SSL=1
       - SSL_PATH=
