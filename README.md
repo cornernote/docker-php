@@ -70,8 +70,6 @@ SSL certificate auto-installation with certbot.
 
 Cron is a time-based job scheduler.
 
-Allows tasks to be run on a schedule.
-
 Auto restarts when cron change is detected.
 
 Comes with lockrun to prevent task overlap.
