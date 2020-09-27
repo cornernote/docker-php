@@ -1,3 +1,12 @@
+# git bash prompt
+if [ -f "$HOME/.bash-git-prompt/gitprompt.sh" ]; then
+    GIT_PROMPT_THEME=TruncatedPwd_WindowTitle_Ubuntu
+    GIT_PROMPT_ONLY_IN_REPO=1
+    source $HOME/.bash-git-prompt/gitprompt.sh
+fi
+
+# Text to ASCII Art Generator (TAAG) - patorjk.com
+# http://patorjk.com/software/taag/#p=display&h=1&v=1&f=Small&t=AFI%20CoRNeRNoTe%0Adocker-php
 cat <<'MSG'
   _____     ___  _  __    ___  _  __   ______
  / ___/__  / _ \/ |/ /__ / _ \/ |/ /__/_  __/__
@@ -12,11 +21,12 @@ Docker image cornernote/docker-php
 
 Available commands:
 
-PHP:                SYSADMIN:
- composer            mysql
- codecept            ping / curl / wget
- psysh               locate / updatedb
-                     lockrun
-                     wkhtmltopdf
+PHP:                MYSQL:              NETWORKING:         OTHER:
+ composer            mysql               certbot             wkhtmltopdf
+ codecept            mydumper            ping                lockrun
+ robo                percona-toolkit     curl
+ psysh                                   wget
+ pecl
+ pear
 
 MSG
