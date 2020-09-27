@@ -30,7 +30,13 @@ docker-compose run --rm php bash
 
 ## Usage Example
 
-### `docker-compose.yml`
+### Using Play With Docker
+
+Find out more about [Play With Docker PHP](https://gist.github.com/cornernote/f3b6c62e76500afd26454e15c6d18d7e).
+
+### Using Docker-Compose
+
+`docker-compose.yml`
 
 ```
 version: '3'
@@ -38,8 +44,6 @@ services:
 
   php:
     image: cornernote/php:7.3.22-fpm-stretch
-    depends_on:
-      - db
     environment:
       - USE_SSL=1
       - DH_SIZE=2048
