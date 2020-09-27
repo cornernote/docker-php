@@ -1,6 +1,96 @@
-# PHP Images
+# PHP Docker Image
+
+The image provides several services relating to serving a PHP web application.
 
 [![Pulls](https://img.shields.io/docker/pulls/cornernote/php.svg?style=flat-square)](https://hub.docker.com/r/cornernote/php/) [![Build](https://img.shields.io/docker/build/cornernote/php.svg?style=flat-square)](https://hub.docker.com/r/cornernote/php/)
+
+## Services
+
+### Supervisor
+
+Supervisor is a client/server system that allows its users to monitor and control a number of processes on UNIX-like operating systems.
+
+Docker runs a single service. Supervisor allows multiple processes to run within a single container.
+
+### PHP
+
+PHP is a popular general-purpose scripting language that is especially suited to web development.
+
+FPM (FastCGI Process Manager) is an alternative PHP FastCGI implementation with some additional features (mostly) useful for heavy-loaded sites.
+
+The PHP-FPM service is available on port 9000.
+
+PHP extensions:
+
+* xdebug
+* v8js
+* gearman
+* soap
+* zip
+* curl
+* bcmath
+* exif
+* gd
+* iconv
+* intl
+* mbstring
+* opcache
+* pdo_mysql
+* pdo_pgsql
+* mysqli
+* pcntl
+* calendar
+* tidy
+* ssh2
+* apcu
+* imagick
+* mailparse
+* mcrypt
+* imap
+
+Linux packages:
+
+* composer
+* codeception
+* psysh
+* robo - TODO
+* wkhtmltopdf
+
+
+### Nginx
+
+Nginx is a high-performance HTTP server and reverse proxy.
+
+Auto restarts when cron change is detected.
+
+SSL certificate auto-installation with certbot.
+
+
+### Cron
+
+Cron is a time-based job scheduler.
+
+Allows tasks to be run on a schedule.
+
+Auto restarts when cron change is detected.
+
+Comes with lockrun to prevent task overlap.
+
+### NRPE
+
+NRPE allows you to locally execute Nagios plugins when requested by a Nagios server to monitor machine metrics (disk usage, CPU load, etc.). 
+
+
+### Other Packages
+
+In addition to the services above, the image comes with following system administration tools:
+
+* mysql client / percona toolkit
+* rsync / s3cmd
+* nodejs / npm
+* image magick
+* ping / curl / wget
+* lockrun
 
 
 ## Supported tags and `Dockerfile` links
