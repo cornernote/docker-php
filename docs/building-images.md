@@ -16,7 +16,6 @@ docker tag d6ee65c835da cornernote/php:latest
 Push to hub.docker.com:
 
 ```
-docker login
 docker push cornernote/php:7.3.22-fpm-stretch
 docker push cornernote/php:latest
 ```
