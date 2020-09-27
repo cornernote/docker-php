@@ -9,9 +9,9 @@
 
 [![Version](https://img.shields.io/badge/version-latest-blue.svg?style=flat-square)](https://github.com/cornernote/docker-php) [![Layers](https://img.shields.io/microbadger/layers/cornernote/php/latest.svg?style=flat-square)](https://hub.docker.com/r/cornernote/php/) [![Size](https://img.shields.io/microbadger/image-size/cornernote/php/latest.svg?style=flat-square)](https://hub.docker.com/r/cornernote/php/)
 
-### `7.3.12-fpm-stretch` [Dockerfile](https://github.com/cornernote/docker-php/blob/7.3.12-fpm-stretch/Dockerfile)
+### `7.3.22-fpm-stretch` [Dockerfile](https://github.com/cornernote/docker-php/blob/7.3.22-fpm-stretch/Dockerfile)
 
-[![Version](https://img.shields.io/badge/version-7.3.12--fpm-stretch-blue.svg?style=flat-square)](https://github.com/cornernote/docker-php/tree/7.3.12-fpm-stretch) [![Layers](https://img.shields.io/microbadger/layers/cornernote/php/7.3.12-fpm-stretch.svg?style=flat-square)](https://hub.docker.com/r/cornernote/php/) [![Size](https://img.shields.io/microbadger/image-size/cornernote/php/7.3.12-fpm-stretch.svg?style=flat-square)](https://hub.docker.com/r/cornernote/php/)
+[![Version](https://img.shields.io/badge/version-7.3.22--fpm-stretch-blue.svg?style=flat-square)](https://github.com/cornernote/docker-php/tree/7.3.22-fpm-stretch) [![Layers](https://img.shields.io/microbadger/layers/cornernote/php/7.3.22-fpm-stretch.svg?style=flat-square)](https://hub.docker.com/r/cornernote/php/) [![Size](https://img.shields.io/microbadger/image-size/cornernote/php/7.3.22-fpm-stretch.svg?style=flat-square)](https://hub.docker.com/r/cornernote/php/)
 
 ### `5.6-fpm` [Dockerfile](https://github.com/cornernote/docker-php/blob/5.6-fpm/Dockerfile)
 

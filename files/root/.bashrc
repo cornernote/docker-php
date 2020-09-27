@@ -12,9 +12,11 @@ Docker image cornernote/docker-php
 
 Available commands:
 
- composer
- codecept
- psysh
- yii
+PHP:                SYSADMIN:
+ composer            mysql
+ codecept            ping / curl / wget
+ psysh               locate / updatedb
+                     lockrun
+                     wkhtmltopdf
 
 MSG
