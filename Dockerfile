@@ -1,7 +1,4 @@
-# PHP Docker image for Yii 2.0 Framework runtime
-# @see https://github.com/dmstr/docker-php-yii2/blob/release/4.x/php/Dockerfile-fpm
-# ==============================================
-
+# PHP Docker image
 FROM php:7.3.22-fpm-stretch
 
 # Set environment variables
