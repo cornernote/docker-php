@@ -41,7 +41,7 @@ if [ "$USE_SSL" = 1 ] ; then
     fi
     # Check for missing SSL
     if [ ! -n "$CERTBOT_DOMAIN" ] ; then
-        $CERTBOT_DOMAIN="app"
+        CERTBOT_DOMAIN="app"
     fi
     if [ ! -f "/etc/letsencrypt/live/$CERTBOT_DOMAIN/privkey.pem" ] ; then
         log "SSL is enabled however cert is missing - removing SSL from /etc/nginx/nginx.conf"
