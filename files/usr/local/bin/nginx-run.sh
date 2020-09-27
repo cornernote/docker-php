@@ -16,17 +16,17 @@ log() {
 set -o errexit
 
 # Generate nginx config from template
+if [ ! -n "$SERVER_NAME" ] ; then
+    export SERVER_NAME="app"
+fi
 if [ -f /etc/nginx/nginx.conf.template ]; then
-  if [ ! -n "$NGINX_ERROR_LOG_LEVEL" ] ; then
-      export NGINX_ERROR_LOG_LEVEL="warn"
-  fi
-  if [ ! -n "$SERVER_NAME" ] ; then
-      export SERVER_NAME="app"
-  fi
-  if [ ! -n "$FASTCGI_PASS_HOST" ] ; then
-      export FASTCGI_PASS_HOST="127.0.0.1:9000"
-  fi
-  envsubst '$NGINX_ERROR_LOG_LEVEL $SERVER_NAME $FASTCGI_PASS_HOST' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
+    if [ ! -n "$NGINX_ERROR_LOG_LEVEL" ] ; then
+        export NGINX_ERROR_LOG_LEVEL="warn"
+    fi
+    if [ ! -n "$FASTCGI_PASS_HOST" ] ; then
+        export FASTCGI_PASS_HOST="127.0.0.1:9000"
+    fi
+    envsubst '$NGINX_ERROR_LOG_LEVEL $SERVER_NAME $FASTCGI_PASS_HOST' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 fi
 
 # Toggle SSL
@@ -41,7 +41,7 @@ if [ "$USE_SSL" = 1 ] ; then
     fi
     # Check for missing SSL
     if [ ! -n "$CERTBOT_DOMAIN" ] ; then
-        CERTBOT_DOMAIN="app"
+        CERTBOT_DOMAIN=$SERVER_NAME
     fi
     if [ ! -f "/etc/letsencrypt/live/$CERTBOT_DOMAIN/privkey.pem" ] ; then
         log "SSL is enabled however cert is missing - removing SSL from /etc/nginx/nginx.conf"
