@@ -16,7 +16,7 @@ log() {
 set -o errexit
 
 # Generate nginx config from template
-if [ ! -f /etc/nginx/nginx.conf.template ]; then
+if [ -f /etc/nginx/nginx.conf.template ]; then
   if [ ! -n "$NGINX_ERROR_LOG_LEVEL" ] ; then
       export NGINX_ERROR_LOG_LEVEL="warn"
   fi
