@@ -2,21 +2,21 @@
 # @see https://github.com/dmstr/docker-php-yii2/blob/release/4.x/php/Dockerfile-fpm
 # ==============================================
 
-FROM php:7.3.12-fpm-stretch
+FROM php:7.3.22-fpm-stretch
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive \
     PHP_USER_ID=33 \
     PHP_ENABLE_XDEBUG=0 \
-    PATH=/app:/app/vendor/bin:/root/.composer/vendor/bin:/tmp/depot_tools:$PATH \
+    PATH=/app:/app/vendor/bin:/root/.composer/vendor/bin:$PATH \
     TERM=linux \
     COMPOSER_ALLOW_SUPERUSER=1
 
 ## Install base OS packages
 RUN pwd && \
 
-    # Install node
-    curl -sL https://deb.nodesource.com/setup_11.x | bash - && \
+    # Setup node
+    curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
 
     # Install packages
     apt-get update && \
@@ -68,7 +68,7 @@ RUN pwd && \
         --no-install-recommends && \
     apt-get clean && \
 
-    ## Install npm
+    ## Update npm
     npm -g install npm@latest && \
 
     # Install less-compiler
@@ -85,9 +85,9 @@ RUN pwd && \
     gcc lockrun.c -o lockrun && \
     cp lockrun /usr/local/bin/ && \
 
-    ## Install wkhtmltopdf 0.12.5
-    curl -L https://downloads.wkhtmltopdf.org/0.12/0.12.5/wkhtmltox_0.12.5-1.stretch_amd64.deb \
-        -o wkhtmltox_0.12.5-1.stretch_amd64.deb && \
+    ## Install wkhtmltopdf
+    curl -L https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.stretch_amd64.deb \
+        -o wkhtmltox_0.12.6-1.stretch_amd64.deb && \
     apt-get -y install \
             wkhtmltopdf \
             build-essential \
@@ -95,8 +95,8 @@ RUN pwd && \
             libssl1.0-dev \
             xorg \
             xvfb && \
-    dpkg -i wkhtmltox_0.12.5-1.stretch_amd64.deb && \
-    rm -f wkhtmltox_0.12.5-1.stretch_amd64.deb && \
+    dpkg -i wkhtmltox_0.12.6-1.stretch_amd64.deb && \
+    rm -f wkhtmltox_0.12.6-1.stretch_amd64.deb && \
     # Install mscorefonts
     curl -L http://ftp.us.debian.org/debian/pool/contrib/m/msttcorefonts/ttf-mscorefonts-installer_3.6_all.deb \
         -o ttf-mscorefonts-installer_3.6_all.deb && \
@@ -104,15 +104,6 @@ RUN pwd && \
             cabextract && \
     dpkg -i ttf-mscorefonts-installer_3.6_all.deb && \
     rm -f ttf-mscorefonts-installer_3.6_all.deb && \
-
-    # Install geoip
-    curl -L https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz \
-        -o GeoLite2-City.tar.gz && \
-    tar xfz GeoLite2-City.tar.gz && \
-    mkdir /usr/share/GeoIP/ && \
-    mv GeoLite2-City_20*/GeoLite2-City.mmdb /usr/share/GeoIP/ && \
-    chmod a+r /usr/share/GeoIP/GeoLite2-City.mmdb && \
-    rm -rf GeoLite2-City.tar.gz GeoLite2-City_20*/ && \
 
     # Cleanup
     apt-get -y autoremove && \
@@ -229,12 +220,12 @@ RUN apt-get update && \
         patchelf && \
     cd /tmp && \
     git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git && \
-    fetch v8 && \
+    /tmp/depot_tools/fetch v8 && \
     cd /tmp/v8 && \
     git checkout 7.5.288.23 && \
-    gclient sync && \
+    /tmp/depot_tools/gclient sync && \
     tools/dev/v8gen.py -vv x64.release -- is_component_build=true use_custom_libcxx=false && \
-    ninja -C out.gn/x64.release/ && \
+    /tmp/depot_tools/ninja -C out.gn/x64.release/ && \
     mkdir -p /opt/v8/lib && \
     mkdir -p /opt/v8/include && \
     cp out.gn/x64.release/lib*.so out.gn/x64.release/*_blob.bin out.gn/x64.release/icudtl.dat /opt/v8/lib/ && \
@@ -264,6 +255,23 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN pip install supervisor-stdout
+
+# Install nginx service
+RUN apt-get update && \
+    apt-get install -y --force-yes \
+            nginx-full \
+            openssl \
+            gettext-base \
+            certbot \
+        --no-install-recommends && \
+    # forward request and error logs to docker log collector
+    ln -sf /dev/stdout /var/log/nginx/access.log && \
+    ln -sf /dev/stderr /var/log/nginx/error.log && \
+    ln -sf /usr/sbin/cron /usr/sbin/crond && \
+    # Cleanup
+    apt-get -y autoremove && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install cron service
 RUN apt-get update && \
@@ -304,11 +312,10 @@ RUN ln -s /usr/local/bin/php /usr/bin/php && \
     chmod 600 \
         /etc/cron.d/app && \
     chmod 700 \
-        /usr/local/bin/cron-entrypoint.sh \
+        /usr/local/bin/entrypoint.sh \
         /usr/local/bin/cron-run.sh \
-        /usr/local/bin/nrpe-entrypoint.sh \
+        /usr/local/bin/nginx-run.sh \
         /usr/local/bin/nrpe-run.sh \
-        /usr/local/bin/php-entrypoint.sh \
         /usr/local/bin/php-run.sh \
         /usr/local/bin/composer \
         /usr/local/bin/codecept \
@@ -317,18 +324,20 @@ RUN ln -s /usr/local/bin/php /usr/bin/php && \
 # Set app working directory
 WORKDIR /app
 
+# Set command entrypoint
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
 # Startup for supervisor
-##ENTRYPOINT ["/usr/local/bin/supervisor-entrypoint.sh"]
-#CMD ["supervisor-run.sh"]
+CMD ["supervisor-run.sh"]
 
 # Startip for cron
-##ENTRYPOINT ["/usr/local/bin/cron-entrypoint.sh"]
 #CMD ["cron-run.sh"]
 
 # Startip for nagios-nrpe
-#ENTRYPOINT ["/usr/local/bin/nrpe-entrypoint.sh"]
 #CMD ["nrpe-run.sh"]
 
+# Startip for nginx
+#CMD ["nginx-run.sh"]
+
 # Startup script for FPM
-ENTRYPOINT ["/usr/local/bin/php-entrypoint.sh"]
-CMD ["php-run.sh"]
+#CMD ["php-run.sh"]
