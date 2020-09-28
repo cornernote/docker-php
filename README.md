@@ -39,33 +39,63 @@ FPM (FastCGI Process Manager) is an alternative PHP FastCGI implementation with 
 
 The PHP-FPM service is available on port 9000.
 
-PHP extensions:
+PHP modules:
 
-* xdebug
-* v8js
-* gearman
-* soap
-* zip
-* curl
+* apcu
 * bcmath
+* calendar
+* Core
+* ctype
+* curl
+* date
+* dom
 * exif
+* fileinfo
+* filter
+* ftp
 * gd
+* gearman
+* hash
 * iconv
+* imagick
+* imap
 * intl
+* json
+* libxml
+* mailparse
 * mbstring
-* opcache
+* mysqli
+* mysqlnd
+* openssl
+* pcntl
+* pcre
+* PDO
 * pdo_mysql
 * pdo_pgsql
-* mysqli
-* pcntl
-* calendar
-* tidy
+* pdo_sqlite
+* Phar
+* posix
+* readline
+* Reflection
+* session
+* SimpleXML
+* soap
+* sodium
+* SPL
+* sqlite3
 * ssh2
-* apcu
-* imagick
-* mailparse
-* mcrypt
-* imap
+* standard
+* tidy
+* tokenizer
+* v8js
+* xml
+* xmlreader
+* xmlwriter
+* Zend OPcache
+* zip
+* zlib
+
+See [phpinfo](docs/phpinfo.md) for complete phpinfo output.
 
 PHP-related Linux packages:
 
