@@ -1,14 +1,12 @@
-# Related Containers
+# Related Images
 
-Update your application definition.
+## MySQL Database Server
 
-`cat > docker-compose.yml` (paste from below, the `CTRL+D`)
+MySQL is a relational database management system.
 
 ```yaml
-# these can be within the same host, or on different hosts
 version: '3'
 services:
-
   db:
     image: percona:8.0
     command: --character-set-server=utf8 --collation-server=utf8_general_ci --sql-mode="ERROR_FOR_DIVISION_BY_ZERO,IGNORE_SPACE,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE,PIPES_AS_CONCAT,REAL_AS_FLOAT"
@@ -17,22 +15,44 @@ services:
       - MYSQL_DATABASE=test
       - MYSQL_PASSWORD=test
       - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - ./build/mysql.cnf:/etc/percona-server.conf.d/zzz-app-last.cnf
     #ports:
     #  - 3306:3306
+```
 
+## Redis Cache Server
+
+Redis is an in-memory data management system.
+
+```yaml
   redis:
     image: redis:5.0-alpine
+    entrypoint: redis-server /etc/redis/redis.conf
+    volumes:
+      - ./build/redis.conf:/etc/redis/redis.conf
     #ports:
     #  - 6379:6379
+```
 
+## Gearman Message Queue
+
+Gearman is a message queue that distributes tasks to multiple computers.
+
+```yaml
+version: '3'
+services:
   gearman:
     image: cornernote/gearman
     #ports:
     #  - 4730:4730
 ```
 
+## Shinken Monitoring Service
+
+Shinken is computer monitoring software compatible with Nagios.
+
 ```yaml
-# monitor the stack from a different host
 version: '3'
 services:
   skinken:

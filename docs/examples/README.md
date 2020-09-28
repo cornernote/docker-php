@@ -19,20 +19,3 @@ When all else fails, check the logs.
 ```shell script
 docker-compose logs -f
 ```
-
-### Missing Port Link
-
-If the link to the exposed port does not show then you can determine it from the SSH link provided.  Simply convert the link as follows then visit the page.
-
-Change:
-
-```shell script
-ssh EXAMPLE@direct.labs.play-with-docker.com
-```
-
-To:
-
-```
-http://EXAMPLE-80.direct.labs.play-with-docker.com
-```
-

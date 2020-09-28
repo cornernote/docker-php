@@ -4,13 +4,32 @@ The image provides several services relating to serving a PHP web application.
 
 [![Pulls](https://img.shields.io/docker/pulls/cornernote/php.svg?style=flat-square)](https://hub.docker.com/r/cornernote/php/) [![Build](https://img.shields.io/docker/build/cornernote/php.svg?style=flat-square)](https://hub.docker.com/r/cornernote/php/)
 
-## Services
+## Documentation
 
-### Supervisor
+### Quick Start
 
-Supervisor is a client/server system that allows its users to monitor and control a number of processes on UNIX-like operating systems.
+`cat > docker-compose.yml` (paste from below, then `CTRL+D`)
 
-Docker runs a single service. Supervisor allows multiple processes to run within a single container.
+```yaml
+version: '3'
+services:
+  php:
+    image: cornernote/php
+    ports:
+      - 80:80
+```
+
+Then start the stack
+    
+```shell script
+docker-compose up -d
+```
+
+For more information see [Documentation](docs/README.md).
+
+
+## Services Provided
+
 
 ### PHP
 
@@ -48,13 +67,20 @@ PHP extensions:
 * mcrypt
 * imap
 
-Linux packages:
+PHP-related Linux packages:
 
 * composer
 * codeception
 * psysh
 * robo - TODO
 * wkhtmltopdf
+
+
+### Supervisor
+
+Supervisor is a client/server system that allows its users to monitor and control a number of processes on UNIX-like operating systems.
+
+Docker runs a single service. Supervisor allows multiple processes to run within a single container.
 
 
 ### Nginx
@@ -74,9 +100,10 @@ Auto restarts when cron change is detected.
 
 Comes with lockrun to prevent task overlap.
 
+
 ### NRPE
 
-NRPE allows you to locally execute Nagios plugins when requested by a Nagios server to monitor machine metrics (disk usage, CPU load, etc.). 
+NRPE allows you to locally execute Nagios plugins when requested by a Nagios or Shinken server to monitor machine metrics (disk usage, CPU load, etc.). 
 
 
 ### Other Packages
