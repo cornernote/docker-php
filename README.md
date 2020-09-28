@@ -19,13 +19,13 @@ services:
       - 80:80
 ```
 
-Then start the stack
+Then start the container
     
 ```shell script
 docker-compose up -d
 ```
 
-For more information see [Documentation](docs/README.md).
+For more examples see [Documentation](docs/README.md) > [Examples](docs/examples/README.md).
 
 
 ## Services Provided
@@ -96,7 +96,7 @@ PHP modules:
 * zip
 * zlib
 
-See [phpinfo](docs/phpinfo.md) for complete phpinfo output.
+For complete phpinfo() output see [Documentation](docs/README.md) > [PHP Info](docs/phpinfo.md).
 
 PHP-related Linux packages:
 

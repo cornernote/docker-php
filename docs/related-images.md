@@ -26,6 +26,8 @@ services:
 Redis is an in-memory data management system.
 
 ```yaml
+version: '3'
+services:
   redis:
     image: redis:5.0-alpine
     entrypoint: redis-server /etc/redis/redis.conf
