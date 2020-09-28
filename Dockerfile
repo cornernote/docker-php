@@ -62,6 +62,7 @@ RUN pwd && \
             netcat \
             gearman \
             inotify-tools \
+            unzip \
         --no-install-recommends && \
     apt-get clean && \
 
