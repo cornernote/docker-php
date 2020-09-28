@@ -11,6 +11,8 @@ services:
     image: cornernote/php
     volumes:
       - ./build/nginx.conf.template:/etc/nginx/nginx.conf.template
+    ports:
+      - 80:80 
 ```
 
 During start-up the following variables will be replaced by environment variables in `nginx.conf.template`:

@@ -87,9 +87,13 @@ Docker runs a single service. Supervisor allows multiple processes to run within
 
 Nginx is a high-performance HTTP server and reverse proxy.
 
-Auto restarts when cron change is detected.
+Support for environment variables in configuration.
 
-SSL certificate auto-installation with certbot.
+Auto restarts when nginx config or ssl change is detected.
+
+SSL certificate support for letsencrypt with certbot.
+
+The nginx service is available on port 80 and 443.
 
 
 ### Cron
@@ -104,6 +108,8 @@ Comes with lockrun to prevent task overlap.
 ### NRPE
 
 NRPE allows you to locally execute Nagios plugins when requested by a Nagios or Shinken server to monitor machine metrics (disk usage, CPU load, etc.). 
+
+The NRPE service is available on port 5666.
 
 
 ### Other Packages

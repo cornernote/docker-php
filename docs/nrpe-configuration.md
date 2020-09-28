@@ -8,6 +8,8 @@ services:
     volumes:
       - ./build/nrpe.cfg:/etc/nagios/nrpe.cfg
       - ./build/nrpe_local.cfg:/etc/nagios/nrpe_local.cfg
+    ports:
+      - 5666:5666 
 ```
 
 To copy the initial configuration, start the container without volumes for `/etc/nagios/nrpe.cfg` or `/etc/nagios/nrpe_local.cfg`, then run:
