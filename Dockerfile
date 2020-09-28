@@ -187,6 +187,10 @@ RUN git clone https://github.com/php/pecl-networking-ssh2.git /usr/src/php/ext/s
     curl -L https://psysh.org/psysh \
         -o /usr/local/bin/psysh && \
 
+    # Install robo
+    curl -L http://robo.li/robo.phar \
+        -o /usr/local/bin/robo && \
+
     # Cleanup
     apt-get -y autoremove && \
     apt-get clean && \
@@ -322,7 +326,8 @@ RUN ln -s /usr/local/bin/php /usr/bin/php && \
         /usr/local/bin/php-run.sh \
         /usr/local/bin/composer \
         /usr/local/bin/codecept \
-        /usr/local/bin/psysh
+        /usr/local/bin/psysh \
+        /usr/local/bin/robo
 
 # Set app working directory
 WORKDIR /app

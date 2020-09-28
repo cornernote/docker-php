@@ -88,6 +88,7 @@ PHP modules:
 * tidy
 * tokenizer
 * v8js
+* xdebug
 * xml
 * xmlreader
 * xmlwriter
@@ -102,8 +103,9 @@ PHP-related Linux packages:
 * composer
 * codeception
 * psysh
-* robo - TODO
+* robo
 * wkhtmltopdf
+* lockrun
 
 
 ### Supervisor

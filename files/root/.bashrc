@@ -21,12 +21,12 @@ Docker image cornernote/docker-php
 
 Available commands:
 
-PHP:                MYSQL:              NETWORKING:         OTHER:
+WEB:                DBA:                NETWORKING:         OTHER:
  composer            mysql               certbot             wkhtmltopdf
  codecept            mydumper            ping                lockrun
- robo                percona-toolkit     curl
+ robo                percona-toolkit     curl                crontab
  psysh                                   wget
- pecl
- pear
+ pecl / pear
+ node / npm
 
 MSG
