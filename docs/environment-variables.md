@@ -42,3 +42,9 @@ The size of the `dhparam.pem` file.
 
 default: `2048`
 
+
+### `PHP_ENABLE_XDEBUG`
+
+Enables PHP xdebug module.
+
+default: 0
