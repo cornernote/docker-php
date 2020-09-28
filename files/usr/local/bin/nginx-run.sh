@@ -29,8 +29,17 @@ if [ -f /etc/nginx/nginx.conf.template ]; then
     envsubst '$NGINX_ERROR_LOG_LEVEL $SERVER_NAME $FASTCGI_PASS_HOST' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 fi
 
-# Toggle SSL
-if [ "$USE_SSL" = 1 ] ; then
+# Toggle HTTP
+if [ -z "$USE_HTTP" ] ; then
+    USE_HTTP=1
+fi
+if [ "$USE_HTTP" = 1 ] ; then
+    log "HTTP is enabled - removing #http;# comments from /etc/nginx/nginx.conf"
+    sed -i -r 's/#http;#//g' /etc/nginx/nginx.conf
+fi
+
+# Toggle HTTPS
+if [ "$USE_HTTPS" = 1 ] ; then
     # Generate dhparam
     if [ ! -n "$DH_SIZE" ] ; then
         DH_SIZE=2048
@@ -39,34 +48,13 @@ if [ "$USE_SSL" = 1 ] ; then
         log "dhparam file /etc/dhparam/dhparam.pem does not exist"
         openssl dhparam -out /etc/dhparam/dhparam.pem $DH_SIZE || die "Could not generate dhparam file"
     fi
-    # Check for missing SSL
-    if [ ! -n "$CERTBOT_DOMAIN" ] ; then
-        CERTBOT_DOMAIN=$SERVER_NAME
-    fi
-    if [ ! -n "$SSL_PATH" ] ; then
-        SSL_PATH="/etc/letsencrypt/live/$CERTBOT_DOMAIN"
-    fi
-    if [ ! -f "$SSL_PATH/privkey.pem" ] ; then
-        log "SSL is enabled however cert is missing - removing SSL from /etc/nginx/nginx.conf"
-        sed -i -r 's/(return .*301)/#;#\1/g; s/(listen .*443)/\1;#/g; s/(ssl_(certificate|certificate_key|trusted_certificate) )/#;#\1/g' /etc/nginx/nginx.conf
-    fi
-else
-    log "SSL is disabled - removing SSL from /etc/nginx/nginx.conf"
-    sed -i -r 's/(return .*301)/#;#\1/g; s/(listen .*443)/\1;#/g; s/(ssl_(certificate|certificate_key|trusted_certificate) )/#;#\1/g' /etc/nginx/nginx.conf
+    log "HTTPS is enabled - removing #https;# comments from /etc/nginx/nginx.conf"
+    sed -i -r 's/#https;#//g' /etc/nginx/nginx.conf
 fi
 
 # Run nginx
 log "Starting nginx"
 nginx # -g 'daemon off;'
-
-# Generate certificate
-if [ "$USE_SSL" = 1 -a -n "$CERTBOT_EMAIL" -a -n "$CERTBOT_DOMAIN" -a ! -f "$SSL_PATH/privkey.pem" ] ; then
-    log "Generating SSL certificate"
-    certbot certonly --noninteractive --agree-tos --email $CERTBOT_EMAIL --webroot --webroot-path /var/letsencrypt -d $CERTBOT_DOMAIN && \
-    log "Certificate successfully installed - adding SSL to /etc/nginx/nginx.conf" && \
-    sed -i -r 's/#?;#//g' /etc/nginx/nginx.conf && \
-    nginx -s reload
-fi
 
 # Check if config or certificates were changed
 while inotifywait -q -r --exclude '\.git/' -e modify,create,delete,move,move_self /etc/nginx /etc/letsencrypt; do
