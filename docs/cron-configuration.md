@@ -6,7 +6,7 @@ services:
   php:
     image: cornernote/php
     volumes:
-      - ./build/crontab:/etc/cron.d/crontab
+      - ./build/crontab:/etc/cron.d/root
 ```
 
 Create a cron file
@@ -18,7 +18,7 @@ Create a cron file
 ```
 
 Start or restart the stack.
-    
+
 ```shell script
 docker-compose up -d
 ```
