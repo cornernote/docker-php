@@ -19,5 +19,3 @@ Then start the stack
 docker-compose up -d
 ```
 
-Your services will be available on their mapped port, just click the label right next to the node IP address.
-

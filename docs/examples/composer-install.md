@@ -1,6 +1,6 @@
 # Composer Libraries
 
-Create the composer files
+Create the composer files to require `alrik11es/cowsayphp`.
 
 `echo {} > composer.lock && cat > composer.json` (paste from below, the `CTRL+D`)
 
@@ -10,6 +10,26 @@ Create the composer files
         "alrik11es/cowsayphp": "1.2.*"
     }
 }
+```
+
+Create a PHP page using the `alrik11es/cowsayphp` extension.
+
+`mkdir -p src/web && cat > src/web/index.php` (paste from below, then `CTRL+D`)
+
+```html
+<?php require('../vendor/autoload.php'); ?>
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Sample Page</title>
+</head>
+<body>
+<?php
+$cow = \Cowsayphp\Farm::create(\Cowsayphp\Farm\Cow::class);
+echo '<pre>'.$cow->say($_GET['message'] ?? 'Send me a ?message= in the URL').'</pre>';
+?>
+</body>
+</html>
 ```
 
 Update your application definition.
@@ -35,26 +55,8 @@ Start or restart the stack.
 docker-compose up -d
 ```
 
-Run composer install inside the container
+Run composer install inside the container.
 
 ```shell script
 docker-compose exec php composer install
-```
-
-`mkdir -p src/web && cat > src/web/index.php` (paste from below, then `CTRL+D`)
-
-```html
-<?php require('../vendor/autoload.php'); ?>
-<!doctype html>
-<html lang="en">
-<head>
-    <title>Sample Page</title>
-</head>
-<body>
-<?php
-$cow = \Cowsayphp\Farm::create(\Cowsayphp\Farm\Cow::class);
-echo '<pre>'.$cow->say($_GET['message'] ?? 'Send me a ?message= in the URL').'</pre>';
-?>
-</body>
-</html>
 ```
