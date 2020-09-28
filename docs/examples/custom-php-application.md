@@ -31,7 +31,7 @@ services:
       - ./src:/app
 ```
 
-Start or restart the stack.
+Start or restart the container.
     
 ```shell script
 docker-compose up -d

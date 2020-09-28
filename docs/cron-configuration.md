@@ -17,7 +17,7 @@ Create a cron file
 * * * * * echo date > /tmp/cron-running
 ```
 
-Start or restart the stack.
+Start or restart the container.
 
 ```shell script
 docker-compose up -d

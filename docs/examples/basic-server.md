@@ -13,7 +13,7 @@ services:
       - 80:80
 ```
 
-Then start the stack
+Then start the container
     
 ```shell script
 docker-compose up -d

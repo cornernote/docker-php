@@ -1,15 +1,9 @@
 # Composer Libraries
 
-Create the composer files to require `alrik11es/cowsayphp`.
+Create the empty composer files.
 
-`echo {} > composer.lock && cat > composer.json` (paste from below, the `CTRL+D`)
-
-```json
-{
-    "require": {
-        "alrik11es/cowsayphp": "1.2.*"
-    }
-}
+```shell script
+echo {} > composer.json && echo {} > composer.lock
 ```
 
 Create a PHP page using the `alrik11es/cowsayphp` extension.
@@ -49,14 +43,14 @@ services:
       - ./src:/app
 ```
 
-Start or restart the stack.
+Start or restart the container.
     
 ```shell script
 docker-compose up -d
 ```
 
-Run composer install inside the container.
+Run composer require inside the container.
 
 ```shell script
-docker-compose exec php composer install
+docker-compose exec php composer require alrik11es/cowsayphp
 ```
