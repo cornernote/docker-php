@@ -9,11 +9,11 @@ version: '3'
 services:
   db:
     image: percona:8.0
-    command: --character-set-server=utf8 --collation-server=utf8_general_ci --sql-mode="ERROR_FOR_DIVISION_BY_ZERO,IGNORE_SPACE,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE,PIPES_AS_CONCAT,REAL_AS_FLOAT"
+    command: --character-set-server=utf8 --collation-server=utf8_general_ci --default-authentication-plugin=mysql_native_password --sql-mode="ERROR_FOR_DIVISION_BY_ZERO,IGNORE_SPACE,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE,PIPES_AS_CONCAT,REAL_AS_FLOAT"
     environment:
-      - MYSQL_USER=test
-      - MYSQL_DATABASE=test
-      - MYSQL_PASSWORD=test
+      - MYSQL_USER=app
+      - MYSQL_DATABASE=app
+      - MYSQL_PASSWORD=app
       - MYSQL_ROOT_PASSWORD=root
     volumes:
       - ./build/mysql.cnf:/etc/percona-server.conf.d/zzz-app-last.cnf
