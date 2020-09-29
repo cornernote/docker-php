@@ -16,8 +16,7 @@ docker tag 352bd66498d6 cornernote/php:latest
 Push to hub.docker.com:
 
 ```
-docker push cornernote/php:7.3.22-fpm-stretch
-docker push cornernote/php:latest
+docker push cornernote/php:7.3.22-fpm-stretch && docker push cornernote/php:latest
 ```
 
 Shell into image
