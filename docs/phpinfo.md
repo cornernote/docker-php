@@ -2,7 +2,7 @@
 
 ## PHP Modules
 
-`docker-compose exec php php -m`
+`docker-compose run --rm php php -m`
 
 ```
 [PHP Modules]
@@ -29,6 +29,7 @@ json
 libxml
 mailparse
 mbstring
+memcached
 mysqli
 mysqlnd
 openssl
@@ -66,13 +67,13 @@ Zend OPcache
 
 ## PHP Info
 
-`docker-compose exec php php -i`
+`docker-compose run --rm php php -i`
 
 ```
 phpinfo()
 PHP Version => 7.3.22
 
-System => Linux c52f42984197 4.15.0-62-generic #69-Ubuntu SMP Wed Sep 4 20:55:53 UTC 2019 x86_64
+System => Linux b72c1a8c3031 4.15.0-62-generic #69-Ubuntu SMP Wed Sep 4 20:55:53 UTC 2019 x86_64
 Build Date => Sep 10 2020 14:57:51
 Configure Command =>  './configure'  '--build=x86_64-linux-gnu' '--with-config-file-path=/usr/local/etc/php' '--with-config-file-scan-dir=/usr/local/etc/php/conf.d' '--enable-option-checking=fatal' '--with-mhash' '--enable-ftp' '--enable-mbstring' '--enable-mysqlnd' '--with-password-argon2' '--with-sodium=shared' '--with-pdo-sqlite=/usr' '--with-sqlite3=/usr' '--with-curl' '--with-libedit' '--with-openssl' '--with-zlib' '--with-libdir=lib/x86_64-linux-gnu' '--enable-fpm' '--with-fpm-user=www-data' '--with-fpm-group=www-data' '--disable-cgi' 'build_alias=x86_64-linux-gnu'
 Server API => Command Line Interface
@@ -91,6 +92,7 @@ Additional .ini files parsed => /usr/local/etc/php/conf.d/base.ini,
 /usr/local/etc/php/conf.d/docker-php-ext-imap.ini,
 /usr/local/etc/php/conf.d/docker-php-ext-intl.ini,
 /usr/local/etc/php/conf.d/docker-php-ext-mailparse.ini,
+/usr/local/etc/php/conf.d/docker-php-ext-memcached.ini,
 /usr/local/etc/php/conf.d/docker-php-ext-mysqli.ini,
 /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini,
 /usr/local/etc/php/conf.d/docker-php-ext-pcntl.ini,
@@ -133,12 +135,12 @@ Configuration
 apcu
 
 APCu Support => Disabled
-Version => 5.1.18
+Version => 5.1.19
 APCu Debugging => Disabled
 MMAP Support => Enabled
 MMAP File Mask =>  
 Serialization Support => Disabled
-Build Date => Sep 27 2020 04:36:28
+Build Date => Oct 13 2020 00:57:54
 
 Directive => Local Value => Master Value
 apc.coredump_unmap => Off => Off
@@ -154,7 +156,7 @@ apc.shm_size => 32M => 32M
 apc.slam_defense => Off => Off
 apc.smart => 0 => 0
 apc.ttl => 0 => 0
-apc.use_request_time => On => On
+apc.use_request_time => Off => Off
 
 bcmath
 
@@ -494,6 +496,46 @@ mbstring.regex_stack_limit => 100000 => 100000
 mbstring.strict_detection => Off => Off
 mbstring.substitute_character => no value => no value
 
+memcached
+
+memcached support => enabled
+Version => 3.1.5
+libmemcached version => 1.0.18
+SASL support => yes
+Session support => yes
+igbinary support => no
+json support => no
+msgpack support => no
+
+Directive => Local Value => Master Value
+memcached.compression_factor => 1.3 => 1.3
+memcached.compression_threshold => 2000 => 2000
+memcached.compression_type => fastlz => fastlz
+memcached.default_binary_protocol => Off => Off
+memcached.default_connect_timeout => 0 => 0
+memcached.default_consistent_hash => Off => Off
+memcached.serializer => php => php
+memcached.sess_binary_protocol => On => On
+memcached.sess_connect_timeout => 0 => 0
+memcached.sess_consistent_hash => On => On
+memcached.sess_consistent_hash_type => ketama => ketama
+memcached.sess_lock_expire => 0 => 0
+memcached.sess_lock_max_wait => not set => not set
+memcached.sess_lock_retries => 5 => 5
+memcached.sess_lock_wait => not set => not set
+memcached.sess_lock_wait_max => 150 => 150
+memcached.sess_lock_wait_min => 150 => 150
+memcached.sess_locking => On => On
+memcached.sess_number_of_replicas => 0 => 0
+memcached.sess_persistent => Off => Off
+memcached.sess_prefix => memc.sess.key. => memc.sess.key.
+memcached.sess_randomize_replica_read => Off => Off
+memcached.sess_remove_failed_servers => Off => Off
+memcached.sess_sasl_password => no value => no value
+memcached.sess_sasl_username => no value => no value
+memcached.sess_server_failure_limit => 0 => 0
+memcached.store_retry_count => 2 => 2
+
 mysqli
 
 MysqlI Support => enabled
@@ -787,7 +829,7 @@ Reflection => enabled
 session
 
 Session Support => enabled
-Registered save handlers => files user 
+Registered save handlers => files user memcached 
 Registered serializer handlers => php_serialize php php_binary 
 
 Directive => Local Value => Master Value
@@ -941,8 +983,8 @@ Cache misses => 0
 Used memory => 8770936
 Free memory => 125446792
 Wasted memory => 0
-Interned Strings Used memory => 467280
-Interned Strings Free memory => 5823752
+Interned Strings Used memory => 477864
+Interned Strings Free memory => 5813168
 Cached scripts => 0
 Cached keys => 0
 Max keys => 7963
@@ -1010,82 +1052,88 @@ Module Name
 Environment
 
 Variable => Value
-PATH => /app:/app/vendor/bin:/root/.composer/vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-HOSTNAME => c52f42984197
-TERM => linux
-PHPIZE_DEPS => autoconf 		dpkg-dev 		file 		g++ 		gcc 		libc-dev 		make 		pkg-config 		re2c
-PHP_INI_DIR => /usr/local/etc/php
-PHP_EXTRA_CONFIGURE_ARGS => --enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data --disable-cgi
-PHP_CFLAGS => -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
-PHP_CPPFLAGS => -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
-PHP_LDFLAGS => -Wl,-O1 -pie
-GPG_KEYS => CBAF69F173A0FEA4B537F470D66C9593118BCCB6 F38252826ACD957EF380D39F2F7956BC5DA04B5D
-PHP_VERSION => 7.3.22
-PHP_URL => https://www.php.net/distributions/php-7.3.22.tar.xz
-PHP_ASC_URL => https://www.php.net/distributions/php-7.3.22.tar.xz.asc
-PHP_SHA256 => 0e66606d3bdab5c2ae3f778136bfe8788e574913a3d8138695e54d98562f1fb5
-PHP_MD5 =>  
-DEBIAN_FRONTEND => noninteractive
+HOSTNAME => b72c1a8c3031
 PHP_USER_ID => 33
-PHP_ENABLE_XDEBUG => 0
+PHPIZE_DEPS => autoconf 		dpkg-dev 		file 		g++ 		gcc 		libc-dev 		make 		pkg-config 		re2c
+GPG_KEYS => CBAF69F173A0FEA4B537F470D66C9593118BCCB6 F38252826ACD957EF380D39F2F7956BC5DA04B5D
+PHP_EXTRA_CONFIGURE_ARGS => --enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data --disable-cgi
+PHP_ASC_URL => https://www.php.net/distributions/php-7.3.22.tar.xz.asc
+PHP_CFLAGS => -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 COMPOSER_ALLOW_SUPERUSER => 1
+PWD => /app
 HOME => /root
+PHP_LDFLAGS => -Wl,-O1 -pie
+DEBIAN_FRONTEND => noninteractive
+PHP_INI_DIR => /usr/local/etc/php
+PHP_URL => https://www.php.net/distributions/php-7.3.22.tar.xz
+PHP_CPPFLAGS => -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+TERM => linux
+PHP_ENABLE_XDEBUG => 0
+PHP_VERSION => 7.3.22
+SHLVL => 0
+PHP_MD5 =>  
+PATH => /app:/app/vendor/bin:/root/.composer/vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+PHP_SHA256 => 0e66606d3bdab5c2ae3f778136bfe8788e574913a3d8138695e54d98562f1fb5
 
 PHP Variables
 
 Variable => Value
-$_SERVER['PATH'] => /app:/app/vendor/bin:/root/.composer/vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-$_SERVER['HOSTNAME'] => c52f42984197
-$_SERVER['TERM'] => linux
-$_SERVER['PHPIZE_DEPS'] => autoconf 		dpkg-dev 		file 		g++ 		gcc 		libc-dev 		make 		pkg-config 		re2c
-$_SERVER['PHP_INI_DIR'] => /usr/local/etc/php
-$_SERVER['PHP_EXTRA_CONFIGURE_ARGS'] => --enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data --disable-cgi
-$_SERVER['PHP_CFLAGS'] => -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
-$_SERVER['PHP_CPPFLAGS'] => -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
-$_SERVER['PHP_LDFLAGS'] => -Wl,-O1 -pie
-$_SERVER['GPG_KEYS'] => CBAF69F173A0FEA4B537F470D66C9593118BCCB6 F38252826ACD957EF380D39F2F7956BC5DA04B5D
-$_SERVER['PHP_VERSION'] => 7.3.22
-$_SERVER['PHP_URL'] => https://www.php.net/distributions/php-7.3.22.tar.xz
-$_SERVER['PHP_ASC_URL'] => https://www.php.net/distributions/php-7.3.22.tar.xz.asc
-$_SERVER['PHP_SHA256'] => 0e66606d3bdab5c2ae3f778136bfe8788e574913a3d8138695e54d98562f1fb5
-$_SERVER['PHP_MD5'] => 
-$_SERVER['DEBIAN_FRONTEND'] => noninteractive
+$_SERVER['HOSTNAME'] => b72c1a8c3031
 $_SERVER['PHP_USER_ID'] => 33
-$_SERVER['PHP_ENABLE_XDEBUG'] => 0
+$_SERVER['PHPIZE_DEPS'] => autoconf 		dpkg-dev 		file 		g++ 		gcc 		libc-dev 		make 		pkg-config 		re2c
+$_SERVER['GPG_KEYS'] => CBAF69F173A0FEA4B537F470D66C9593118BCCB6 F38252826ACD957EF380D39F2F7956BC5DA04B5D
+$_SERVER['PHP_EXTRA_CONFIGURE_ARGS'] => --enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data --disable-cgi
+$_SERVER['PHP_ASC_URL'] => https://www.php.net/distributions/php-7.3.22.tar.xz.asc
+$_SERVER['PHP_CFLAGS'] => -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 $_SERVER['COMPOSER_ALLOW_SUPERUSER'] => 1
+$_SERVER['PWD'] => /app
 $_SERVER['HOME'] => /root
+$_SERVER['PHP_LDFLAGS'] => -Wl,-O1 -pie
+$_SERVER['DEBIAN_FRONTEND'] => noninteractive
+$_SERVER['PHP_INI_DIR'] => /usr/local/etc/php
+$_SERVER['PHP_URL'] => https://www.php.net/distributions/php-7.3.22.tar.xz
+$_SERVER['PHP_CPPFLAGS'] => -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+$_SERVER['TERM'] => linux
+$_SERVER['PHP_ENABLE_XDEBUG'] => 0
+$_SERVER['PHP_VERSION'] => 7.3.22
+$_SERVER['SHLVL'] => 0
+$_SERVER['PHP_MD5'] => 
+$_SERVER['PATH'] => /app:/app/vendor/bin:/root/.composer/vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+$_SERVER['PHP_SHA256'] => 0e66606d3bdab5c2ae3f778136bfe8788e574913a3d8138695e54d98562f1fb5
 $_SERVER['PHP_SELF'] => 
 $_SERVER['SCRIPT_NAME'] => 
 $_SERVER['SCRIPT_FILENAME'] => 
 $_SERVER['PATH_TRANSLATED'] => 
 $_SERVER['DOCUMENT_ROOT'] => 
-$_SERVER['REQUEST_TIME_FLOAT'] => 1601278424.6557
-$_SERVER['REQUEST_TIME'] => 1601278424
+$_SERVER['REQUEST_TIME_FLOAT'] => 1602555425.1821
+$_SERVER['REQUEST_TIME'] => 1602555425
 $_SERVER['argv'] => Array
 (
 )
 
 $_SERVER['argc'] => 0
-$_ENV['PATH'] => /app:/app/vendor/bin:/root/.composer/vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-$_ENV['HOSTNAME'] => c52f42984197
-$_ENV['TERM'] => linux
-$_ENV['PHPIZE_DEPS'] => autoconf 		dpkg-dev 		file 		g++ 		gcc 		libc-dev 		make 		pkg-config 		re2c
-$_ENV['PHP_INI_DIR'] => /usr/local/etc/php
-$_ENV['PHP_EXTRA_CONFIGURE_ARGS'] => --enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data --disable-cgi
-$_ENV['PHP_CFLAGS'] => -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
-$_ENV['PHP_CPPFLAGS'] => -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
-$_ENV['PHP_LDFLAGS'] => -Wl,-O1 -pie
-$_ENV['GPG_KEYS'] => CBAF69F173A0FEA4B537F470D66C9593118BCCB6 F38252826ACD957EF380D39F2F7956BC5DA04B5D
-$_ENV['PHP_VERSION'] => 7.3.22
-$_ENV['PHP_URL'] => https://www.php.net/distributions/php-7.3.22.tar.xz
-$_ENV['PHP_ASC_URL'] => https://www.php.net/distributions/php-7.3.22.tar.xz.asc
-$_ENV['PHP_SHA256'] => 0e66606d3bdab5c2ae3f778136bfe8788e574913a3d8138695e54d98562f1fb5
-$_ENV['PHP_MD5'] => 
-$_ENV['DEBIAN_FRONTEND'] => noninteractive
+$_ENV['HOSTNAME'] => b72c1a8c3031
 $_ENV['PHP_USER_ID'] => 33
-$_ENV['PHP_ENABLE_XDEBUG'] => 0
+$_ENV['PHPIZE_DEPS'] => autoconf 		dpkg-dev 		file 		g++ 		gcc 		libc-dev 		make 		pkg-config 		re2c
+$_ENV['GPG_KEYS'] => CBAF69F173A0FEA4B537F470D66C9593118BCCB6 F38252826ACD957EF380D39F2F7956BC5DA04B5D
+$_ENV['PHP_EXTRA_CONFIGURE_ARGS'] => --enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data --disable-cgi
+$_ENV['PHP_ASC_URL'] => https://www.php.net/distributions/php-7.3.22.tar.xz.asc
+$_ENV['PHP_CFLAGS'] => -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 $_ENV['COMPOSER_ALLOW_SUPERUSER'] => 1
+$_ENV['PWD'] => /app
 $_ENV['HOME'] => /root
+$_ENV['PHP_LDFLAGS'] => -Wl,-O1 -pie
+$_ENV['DEBIAN_FRONTEND'] => noninteractive
+$_ENV['PHP_INI_DIR'] => /usr/local/etc/php
+$_ENV['PHP_URL'] => https://www.php.net/distributions/php-7.3.22.tar.xz
+$_ENV['PHP_CPPFLAGS'] => -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+$_ENV['TERM'] => linux
+$_ENV['PHP_ENABLE_XDEBUG'] => 0
+$_ENV['PHP_VERSION'] => 7.3.22
+$_ENV['SHLVL'] => 0
+$_ENV['PHP_MD5'] => 
+$_ENV['PATH'] => /app:/app/vendor/bin:/root/.composer/vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+$_ENV['PHP_SHA256'] => 0e66606d3bdab5c2ae3f778136bfe8788e574913a3d8138695e54d98562f1fb5
 
 PHP License
 This program is free software; you can redistribute it and/or modify
