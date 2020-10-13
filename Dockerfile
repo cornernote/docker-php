@@ -26,6 +26,7 @@ RUN pwd && \
             curl \
             wget \
             mlocate \
+            libmemcached-dev \
             imagemagick \
             libfreetype6-dev \
             libcurl3-dev \
@@ -138,11 +139,13 @@ RUN git clone https://github.com/php/pecl-networking-ssh2.git /usr/src/php/ext/s
     # see http://stackoverflow.com/a/8154466/291573) for usage of `printf`
     printf "\n" | pecl install \
         apcu \
+        memcached \
         imagick \
         mailparse \
         mcrypt-1.0.0 && \
     docker-php-ext-enable \
         apcu \
+        memcached \
         imagick \
         mailparse && \
 
