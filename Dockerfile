@@ -31,7 +31,6 @@ RUN pwd && \
             libfreetype6-dev \
             libcurl3-dev \
             libicu-dev \
-            libmcrypt-dev \
             libfreetype6-dev \
             libjpeg-dev \
             libjpeg62-turbo-dev \
@@ -172,6 +171,7 @@ RUN git clone https://github.com/php/pecl-networking-ssh2.git /usr/src/php/ext/s
 
     # Install composer
     curl -sS https://getcomposer.org/installer | php -- \
+        --version=1.10.17 \
         --filename=composer.phar \
         --install-dir=/usr/local/bin && \
     composer.phar global require --optimize-autoloader \

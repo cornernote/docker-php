@@ -64,6 +64,7 @@ PHP modules:
 * libxml
 * mailparse
 * mbstring
+* mcrypt
 * memcached
 * mysqli
 * mysqlnd

@@ -29,6 +29,7 @@ json
 libxml
 mailparse
 mbstring
+mcrypt
 memcached
 mysqli
 mysqlnd
@@ -73,7 +74,7 @@ Zend OPcache
 phpinfo()
 PHP Version => 7.3.22
 
-System => Linux b72c1a8c3031 4.15.0-62-generic #69-Ubuntu SMP Wed Sep 4 20:55:53 UTC 2019 x86_64
+System => Linux 46770d60ec7a 5.4.0-52-generic #57-Ubuntu SMP Thu Oct 15 10:57:00 UTC 2020 x86_64
 Build Date => Sep 10 2020 14:57:51
 Configure Command =>  './configure'  '--build=x86_64-linux-gnu' '--with-config-file-path=/usr/local/etc/php' '--with-config-file-scan-dir=/usr/local/etc/php/conf.d' '--enable-option-checking=fatal' '--with-mhash' '--enable-ftp' '--enable-mbstring' '--enable-mysqlnd' '--with-password-argon2' '--with-sodium=shared' '--with-pdo-sqlite=/usr' '--with-sqlite3=/usr' '--with-curl' '--with-libedit' '--with-openssl' '--with-zlib' '--with-libdir=lib/x86_64-linux-gnu' '--enable-fpm' '--with-fpm-user=www-data' '--with-fpm-group=www-data' '--disable-cgi' 'build_alias=x86_64-linux-gnu'
 Server API => Command Line Interface
@@ -92,6 +93,7 @@ Additional .ini files parsed => /usr/local/etc/php/conf.d/base.ini,
 /usr/local/etc/php/conf.d/docker-php-ext-imap.ini,
 /usr/local/etc/php/conf.d/docker-php-ext-intl.ini,
 /usr/local/etc/php/conf.d/docker-php-ext-mailparse.ini,
+/usr/local/etc/php/conf.d/docker-php-ext-mcrypt.ini,
 /usr/local/etc/php/conf.d/docker-php-ext-memcached.ini,
 /usr/local/etc/php/conf.d/docker-php-ext-mysqli.ini,
 /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini,
@@ -120,7 +122,7 @@ DTrace Support => disabled
 
 Registered PHP Streams => https, ftps, compress.zlib, php, file, glob, data, http, ftp, phar, ssh2.shell, ssh2.exec, ssh2.tunnel, ssh2.scp, ssh2.sftp, zip
 Registered Stream Socket Transports => tcp, udp, unix, udg, ssl, tls, tlsv1.0, tlsv1.1, tlsv1.2
-Registered Stream Filters => zlib.*, convert.iconv.*, string.rot13, string.toupper, string.tolower, string.strip_tags, convert.*, consumed, dechunk
+Registered Stream Filters => zlib.*, convert.iconv.*, string.rot13, string.toupper, string.tolower, string.strip_tags, convert.*, consumed, dechunk, mcrypt.*, mdecrypt.*
 
 This program makes use of the Zend Scripting Language Engine:
 Zend Engine v3.3.22, Copyright (c) 1998-2018 Zend Technologies
@@ -140,7 +142,7 @@ APCu Debugging => Disabled
 MMAP Support => Enabled
 MMAP File Mask =>  
 Serialization Support => Disabled
-Build Date => Oct 13 2020 00:57:54
+Build Date => Nov  2 2020 05:36:13
 
 Directive => Local Value => Master Value
 apc.coredump_unmap => Off => Off
@@ -495,6 +497,19 @@ mbstring.language => neutral => neutral
 mbstring.regex_stack_limit => 100000 => 100000
 mbstring.strict_detection => Off => Off
 mbstring.substitute_character => no value => no value
+
+mcrypt
+
+mcrypt support => enabled
+mcrypt_filter support => enabled
+Version => 2.5.8
+Api No => 20021217
+Supported ciphers => cast-128 gost rijndael-128 twofish arcfour cast-256 loki97 rijndael-192 saferplus wake blowfish-compat des rijndael-256 serpent xtea blowfish enigma rc2 tripledes 
+Supported modes => cbc cfb ctr ecb ncfb nofb ofb stream 
+
+Directive => Local Value => Master Value
+mcrypt.algorithms_dir => no value => no value
+mcrypt.modes_dir => no value => no value
 
 memcached
 
@@ -983,8 +998,8 @@ Cache misses => 0
 Used memory => 8770936
 Free memory => 125446792
 Wasted memory => 0
-Interned Strings Used memory => 477864
-Interned Strings Free memory => 5813168
+Interned Strings Used memory => 484872
+Interned Strings Free memory => 5806160
 Cached scripts => 0
 Cached keys => 0
 Max keys => 7963
@@ -1052,7 +1067,7 @@ Module Name
 Environment
 
 Variable => Value
-HOSTNAME => b72c1a8c3031
+HOSTNAME => 46770d60ec7a
 PHP_USER_ID => 33
 PHPIZE_DEPS => autoconf 		dpkg-dev 		file 		g++ 		gcc 		libc-dev 		make 		pkg-config 		re2c
 GPG_KEYS => CBAF69F173A0FEA4B537F470D66C9593118BCCB6 F38252826ACD957EF380D39F2F7956BC5DA04B5D
@@ -1078,7 +1093,7 @@ PHP_SHA256 => 0e66606d3bdab5c2ae3f778136bfe8788e574913a3d8138695e54d98562f1fb5
 PHP Variables
 
 Variable => Value
-$_SERVER['HOSTNAME'] => b72c1a8c3031
+$_SERVER['HOSTNAME'] => 46770d60ec7a
 $_SERVER['PHP_USER_ID'] => 33
 $_SERVER['PHPIZE_DEPS'] => autoconf 		dpkg-dev 		file 		g++ 		gcc 		libc-dev 		make 		pkg-config 		re2c
 $_SERVER['GPG_KEYS'] => CBAF69F173A0FEA4B537F470D66C9593118BCCB6 F38252826ACD957EF380D39F2F7956BC5DA04B5D
@@ -1105,14 +1120,14 @@ $_SERVER['SCRIPT_NAME'] =>
 $_SERVER['SCRIPT_FILENAME'] => 
 $_SERVER['PATH_TRANSLATED'] => 
 $_SERVER['DOCUMENT_ROOT'] => 
-$_SERVER['REQUEST_TIME_FLOAT'] => 1602555425.1821
-$_SERVER['REQUEST_TIME'] => 1602555425
+$_SERVER['REQUEST_TIME_FLOAT'] => 1604303671.511
+$_SERVER['REQUEST_TIME'] => 1604303671
 $_SERVER['argv'] => Array
 (
 )
 
 $_SERVER['argc'] => 0
-$_ENV['HOSTNAME'] => b72c1a8c3031
+$_ENV['HOSTNAME'] => 46770d60ec7a
 $_ENV['PHP_USER_ID'] => 33
 $_ENV['PHPIZE_DEPS'] => autoconf 		dpkg-dev 		file 		g++ 		gcc 		libc-dev 		make 		pkg-config 		re2c
 $_ENV['GPG_KEYS'] => CBAF69F173A0FEA4B537F470D66C9593118BCCB6 F38252826ACD957EF380D39F2F7956BC5DA04B5D
