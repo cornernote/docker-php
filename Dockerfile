@@ -142,12 +142,13 @@ RUN git clone https://github.com/php/pecl-networking-ssh2.git /usr/src/php/ext/s
         memcached \
         imagick \
         mailparse \
-        mcrypt-1.0.0 && \
+        mcrypt-1.0.2 && \
     docker-php-ext-enable \
         apcu \
         memcached \
         imagick \
-        mailparse && \
+        mailparse \
+        mcrypt && \
 
     # Install xdebug
     cd /tmp && \
