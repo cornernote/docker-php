@@ -55,7 +55,7 @@ http {
 #https;#        listen                               443 ssl http2;
 #https;#        listen                               [::]:443 ssl http2;
 #https;#        server_name                          ${SERVER_NAME};
-#https;#        set                                  $base /${SERVER_NAME};
+#https;#        set                                  $base /app;
 #https;#        root                                 $base/web;
 #https;#
 #https;#        # SSL
@@ -159,7 +159,7 @@ http {
 #http;#        listen      80;
 #http;#        listen      [::]:80;
 #http;#        server_name                          ${SERVER_NAME};
-#http;#        set                                  $base /${SERVER_NAME};
+#http;#        set                                  $base /app;
 #http;#        root                                 $base/web;
 #http;#
 #http;#        # security headers
